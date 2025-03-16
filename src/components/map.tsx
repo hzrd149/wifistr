@@ -4,12 +4,19 @@ import { LocateControl } from "leaflet.locatecontrol";
 
 import "leaflet/dist/leaflet.css";
 import "leaflet.locatecontrol/dist/L.Control.Locate.css";
+import { createFileMetadataTags } from "applesauce-factory/helpers/file-metadata";
+import { safeParse } from "applesauce-core/helpers";
 
 type Marker = LatLng & {
   popup?: string;
 };
 
-function Map(props: { markers?: Marker[]; class?: string; center?: LatLng }) {
+function Map(props: {
+  markers?: Marker[];
+  class?: string;
+  center?: LatLng;
+  cache?: string;
+}) {
   let mapContainer: HTMLDivElement | undefined;
   let map: L.Map | undefined;
   const markersLayer = L.layerGroup();
@@ -53,6 +60,39 @@ function Map(props: { markers?: Marker[]; class?: string; center?: LatLng }) {
     });
   });
 
+  // save map center when move
+  createEffect(() => {
+    props.center;
+
+    if (props.cache && map) {
+      // load center from cache
+      if (!props.center) {
+        const cached = safeParse<{ center: LatLng; zoom: number }>(
+          localStorage.getItem(props.cache + "-map-position") ?? "",
+        );
+        if (cached) {
+          map.setView(cached.center, cached.zoom);
+        }
+      }
+
+      // save updates to local storage
+      const listener = () => {
+        localStorage.setItem(
+          props.cache + "-map-position",
+          JSON.stringify({ center: map!.getCenter(), zoom: map!.getZoom() }),
+        );
+      };
+
+      map.addEventListener("moveend", listener);
+      map.addEventListener("zoomend", listener);
+      return () => {
+        map!.removeEventListener("moveend", listener);
+        map!.removeEventListener("zoomend", listener);
+      };
+    }
+  });
+
+  // center the map when props change
   createEffect(() => {
     if (props.center && map) {
       map.setView([props.center.lat, props.center.lng]);

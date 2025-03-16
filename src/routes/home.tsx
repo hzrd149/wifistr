@@ -16,7 +16,12 @@ function HomeView(props: RouteSectionProps) {
           </a>
         </header>
         <main class="flex-col flex-grow flex">
-          <Map class="grow" markers={[]} center={location.state?.center} />
+          <Map
+            class="grow"
+            markers={[]}
+            center={location.state?.center}
+            cache="home"
+          />
         </main>
         <footer class="bg-blue-500 text-white py-2 text-center">
           {/* Add footer content here if needed */}
