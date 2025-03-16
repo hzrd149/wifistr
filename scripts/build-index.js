@@ -1,6 +1,8 @@
 import fs from "fs";
 import cities from "cities-with-1000";
 
+console.log("Building cities.txt");
+
 var lines = fs.readFileSync(cities.file, "utf8").split("\n");
 
 const write = fs.createWriteStream("public/cities.txt");
