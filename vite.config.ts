@@ -5,6 +5,9 @@ import devtools from "solid-devtools/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     solid(),
     tailwindcss(),
@@ -17,6 +20,10 @@ export default defineConfig({
         skipWaiting: true,
         globPatterns: ["**/*.{js,css,html,ico,png,svg,txt}"],
         maximumFileSizeToCacheInBytes: 1024 * 1024 * 1024,
+      },
+      manifest: {
+        name: "Wifistr",
+        theme_color: "#0000ff",
       },
     }),
   ],

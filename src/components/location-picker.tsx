@@ -1,0 +1,73 @@
+import { createEffect, onCleanup } from "solid-js";
+
+import L, { LatLng } from "leaflet";
+import { LocateControl } from "leaflet.locatecontrol";
+
+function LocationPicker(props: {
+  onPick: (latLng: LatLng) => void;
+  class?: string;
+}) {
+  let mapContainer: HTMLDivElement | undefined;
+  let map: L.Map | undefined;
+
+  createEffect(() => {
+    if (!mapContainer) return;
+
+    if (!map) {
+      map = L.map(mapContainer).setView([51.505, -0.09], 17);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      let marker = L.marker(map.getCenter(), {
+        draggable: false,
+      }).addTo(map);
+
+      map.on("move", () => {
+        const center = map!.getCenter();
+        marker.setLatLng(center);
+      });
+      map.on("zoom", () => {
+        const center = map!.getCenter();
+        marker.setLatLng(center);
+      });
+
+      map.on("moveend", () => {
+        const center = map!.getCenter();
+        props.onPick(center);
+      });
+
+      const locate = new LocateControl({
+        position: "topleft",
+        keepCurrentZoomLevel: true,
+        cacheLocation: true,
+        locateOptions: {
+          enableHighAccuracy: true,
+        },
+      });
+      map.addControl(locate);
+
+      locate.start();
+      return () => {
+        locate.stop();
+      };
+    }
+  });
+
+  onCleanup(() => {
+    if (map) map.remove();
+  });
+
+  return (
+    <div
+      ref={mapContainer}
+      style={{ height: "100%", width: "100%" }}
+      class={props.class}
+    ></div>
+  );
+}
+
+export default LocationPicker;

@@ -1,11 +1,8 @@
 import { createEffect, onCleanup } from "solid-js";
+import { safeParse } from "applesauce-core/helpers";
+
 import L, { LatLng } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
-
-import "leaflet/dist/leaflet.css";
-import "leaflet.locatecontrol/dist/L.Control.Locate.css";
-import { createFileMetadataTags } from "applesauce-factory/helpers/file-metadata";
-import { safeParse } from "applesauce-core/helpers";
 
 type Marker = LatLng & {
   popup?: string;

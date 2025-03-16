@@ -38,10 +38,58 @@ function SearchView() {
   };
 
   return (
-    <div class="overflow-hidden h-full flex flex-col">
-      <div class="flex items-center gap-2 p-2 ">
+    <>
+      <main class="overflow-y-auto p-2 flex flex-grow flex-col-reverse">
+        <For
+          each={results()}
+          fallback={
+            <Switch
+              fallback={
+                <div class="flex justify-center items-center h-32">
+                  <p class="text-lg text-gray-500">Search for city</p>
+                </div>
+              }
+            >
+              <Match when={results() === null}>
+                <div class="flex justify-center items-center h-32">
+                  <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+              </Match>
+              <Match when={results()?.length === 0}>
+                <div class="flex justify-center items-center h-32">
+                  <p class="text-lg text-gray-500">No cities found</p>
+                </div>
+              </Match>
+            </Switch>
+          }
+        >
+          {(city) => (
+            <li class="bg-white shadow-md rounded-lg p-4 mb-2">
+              <a
+                href="#"
+                class="text-blue-500 hover:underline float-right"
+                on:click={() =>
+                  navigate("/", {
+                    state: { center: { lat: city.lat, lng: city.lng } },
+                  })
+                }
+              >
+                View
+              </a>
+              <div class="font-bold text-lg">
+                {city.name} ({city.country})
+              </div>
+              <div class="text-sm text-gray-600 mt-2">
+                Lat: {city.lat}, Lng: {city.lng}
+              </div>
+            </li>
+          )}
+        </For>
+      </main>
+
+      <footer class="flex items-center gap-2 p-2 ">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate(-1)}
           class="bg-blue-500 text-white rounded p-2 cursor-pointer"
         >
           <BackIcon />
@@ -54,57 +102,8 @@ function SearchView() {
           on:input={handleInputChange}
           autofocus
         />
-      </div>
-      <div class="overflow-y-auto p-2">
-        <ul class="list-disc pl-4">
-          <For
-            each={results()}
-            fallback={
-              <Switch
-                fallback={
-                  <div class="flex justify-center items-center h-32">
-                    <p class="text-lg text-gray-500">Search for city</p>
-                  </div>
-                }
-              >
-                <Match when={results() === null}>
-                  <div class="flex justify-center items-center h-32">
-                    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
-                  </div>
-                </Match>
-                <Match when={results()?.length === 0}>
-                  <div class="flex justify-center items-center h-32">
-                    <p class="text-lg text-gray-500">No cities found</p>
-                  </div>
-                </Match>
-              </Switch>
-            }
-          >
-            {(city) => (
-              <li class="bg-white shadow-md rounded-lg p-4 mb-2">
-                <a
-                  href="#"
-                  class="text-blue-500 hover:underline float-right"
-                  on:click={() =>
-                    navigate("/", {
-                      state: { center: { lat: city.lat, lng: city.lng } },
-                    })
-                  }
-                >
-                  View
-                </a>
-                <div class="font-bold text-lg">
-                  {city.name} ({city.country})
-                </div>
-                <div class="text-sm text-gray-600 mt-2">
-                  Lat: {city.lat}, Lng: {city.lng}
-                </div>
-              </li>
-            )}
-          </For>
-        </ul>
-      </div>
-    </div>
+      </footer>
+    </>
   );
 }
 

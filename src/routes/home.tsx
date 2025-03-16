@@ -1,20 +1,14 @@
 import { Location, RouteSectionProps } from "@solidjs/router";
 import Map from "../components/map";
-import { SearchIcon } from "../components/icons";
-import { LatLng } from "leaflet";
+import { type LatLng } from "leaflet";
+import { PlusIcon, QrCodeIcon, SearchIcon } from "../components/icons";
 
 function HomeView(props: RouteSectionProps) {
   const location: Location<{ center?: LatLng }> = props.location;
 
   return (
     <>
-      <div class="min-h-screen bg-gray-100 flex flex-col">
-        <header class="bg-blue-500 text-white py-4 flex justify-between items-center">
-          <h1 class="text-left text-xl font-bold mx-4">Wifistr</h1>
-          <a href="/search" class="mr-4">
-            <SearchIcon />
-          </a>
-        </header>
+      <div class="h-screen bg-gray-100 flex flex-col overflow-hidden">
         <main class="flex-col flex-grow flex">
           <Map
             class="grow"
@@ -23,8 +17,17 @@ function HomeView(props: RouteSectionProps) {
             cache="home"
           />
         </main>
-        <footer class="bg-blue-500 text-white py-2 text-center">
-          {/* Add footer content here if needed */}
+        <footer class="bg-blue-500 text-white p-2 flex items-center gap-2">
+          <a href="/search" class="p-2">
+            <SearchIcon />
+          </a>
+          <div class="flex-grow"></div>
+          <a class="p-2" href="/scan">
+            <QrCodeIcon />
+          </a>
+          <a class="p-2" href="/create">
+            <PlusIcon />
+          </a>
         </footer>
       </div>
     </>
