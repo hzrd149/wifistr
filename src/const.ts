@@ -1,0 +1,1 @@
+export const WIFI_NETWORK_KIND=8436

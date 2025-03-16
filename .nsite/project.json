@@ -1,0 +1,17 @@
+{
+  "relays": [
+    "wss://nostrue.com",
+    "wss://relay.damus.io",
+    "wss://nos.lol",
+    "wss://purplepag.es",
+    "wss://nostr.mom"
+  ],
+  "servers": ["https://nostr.download", "https://blossom.primal.net"],
+  "profile": {
+    "name": "wifistr",
+    "about": "Open wifi map powered by nostr"
+  },
+  "publishProfile": true,
+  "publishServerList": true,
+  "publishRelayList": true
+}
