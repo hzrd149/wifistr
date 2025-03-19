@@ -7,6 +7,7 @@ import { VitePWA } from "vite-plugin-pwa";
 export default defineConfig({
   build: {
     sourcemap: true,
+    target: ["chrome89", "edge89", "firefox89", "safari15"],
   },
   plugins: [
     solid(),
