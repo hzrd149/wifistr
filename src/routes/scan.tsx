@@ -47,7 +47,7 @@ function ScanQrCodeView() {
   });
 
   return (
-    <div class="h-screen overflow-hidden flex flex-col">
+    <div class="h-dvh overflow-hidden flex flex-col">
       <div class="flex-grow">
         <video
           ref={videoRef}

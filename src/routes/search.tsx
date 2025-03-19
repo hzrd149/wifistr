@@ -2,7 +2,7 @@ import { createResource, createSignal, For, Match, Switch } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 
 import { BackIcon } from "../components/icons";
-import { City, getSearchIndex } from "../search";
+import { City, getSearchIndex } from "../services/search";
 import { matchSorter } from "match-sorter";
 
 function SearchView() {

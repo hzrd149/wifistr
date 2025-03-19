@@ -11,16 +11,23 @@
   },
   "dependencies": {
     "@solidjs/router": "^0.15.3",
-    "applesauce-core": "next",
-    "applesauce-factory": "next",
+    "applesauce-accounts": "^0.12.0",
+    "applesauce-actions": "^0.12.0",
+    "applesauce-core": "^0.12.0",
+    "applesauce-factory": "^0.12.0",
+    "applesauce-loaders": "^0.12.0",
+    "applesauce-signers": "^0.12.0",
     "leaflet": "^1.9.4",
     "leaflet.locatecontrol": "^0.83.1",
     "match-sorter": "^8.0.0",
+    "nanoid": "^5.1.5",
     "nostr-tools": "^2.11.0",
     "qr-scanner": "^1.4.2",
     "rx-nostr": "^3.5.0",
+    "rxjs": "^7.8.2",
     "solid-js": "^1.9.5",
-    "tailwindcss": "^4.0.14"
+    "tailwindcss": "^4.0.14",
+    "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.14",
