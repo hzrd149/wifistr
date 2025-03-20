@@ -2,7 +2,10 @@ import "./lib/leaflet";
 import { render } from "solid-js/web";
 import "./index.css";
 import { Route, Router } from "@solidjs/router";
+import { Toaster } from "solid-toast";
 import "solid-devtools";
+
+import "./services/lifestyle";
 
 import HomeView from "./routes/home";
 import SearchView from "./routes/search";
@@ -12,21 +15,25 @@ import WelcomeView from "./routes/welcome";
 import SigninView from "./routes/signin";
 import SettingsView from "./routes/settings";
 import ProfileView from "./routes/profile";
-
+import NotFoundView from "./routes/404";
 const root = document.getElementById("root");
 
 render(
   () => (
-    <Router>
-      <Route path="/" component={HomeView} />
-      <Route path="/search" component={SearchView} />
-      <Route path="/create" component={CreateWifiView} />
-      <Route path="/scan" component={ScanQrCodeView} />
-      <Route path="/welcome" component={WelcomeView} />
-      <Route path="/signin" component={SigninView} />
-      <Route path="/settings" component={SettingsView} />
-      <Route path="/profile" component={ProfileView} />
-    </Router>
+    <>
+      <Toaster />
+      <Router>
+        <Route path="/" component={HomeView} />
+        <Route path="/search" component={SearchView} />
+        <Route path="/create" component={CreateWifiView} />
+        <Route path="/scan" component={ScanQrCodeView} />
+        <Route path="/welcome" component={WelcomeView} />
+        <Route path="/signin" component={SigninView} />
+        <Route path="/settings" component={SettingsView} />
+        <Route path="/profile" component={ProfileView} />
+        <Route path="*" component={NotFoundView} />
+      </Router>
+    </>
   ),
   root!,
 );
