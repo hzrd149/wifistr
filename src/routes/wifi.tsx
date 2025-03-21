@@ -1,21 +1,30 @@
-import {
-  Navigate,
-  RouteSectionProps,
-  useNavigate,
-  useParams,
-} from "@solidjs/router";
+import { Navigate, RouteSectionProps, useNavigate } from "@solidjs/router";
 import { createEffect, createSignal, For, from } from "solid-js";
 import { nip19, NostrEvent } from "nostr-tools";
 
-import { BackIcon } from "../components/icons";
+import { BackIcon, QrCodeIcon } from "../components/icons";
 import { queryStore } from "../services/stores";
 import { replaceableLoader } from "../services/loaders";
-import { getTagValue } from "applesauce-core/helpers";
+import { getTagValue, mergeRelaySets } from "applesauce-core/helpers";
+import { accounts } from "../services/accounts";
+import { appRelays } from "../services/lifestyle";
+import CopyButton from "../components/copy-button";
+import UserAvatar from "../components/user-avatar";
+import UserName from "../components/user-name";
+import UserFollowButton from "../components/user-follow-button";
 
 function WifiPage(props: { wifi: NostrEvent }) {
   const name = getTagValue(props.wifi, "name");
   const ssid = getTagValue(props.wifi, "ssid");
   const password = getTagValue(props.wifi, "password");
+  // const hidden = getTagValue(props.wifi, "h") === "true";
+  // const captive = getTagValue(props.wifi, "c") === "true";
+
+  // const link = createWifiQrCode({
+  //   ssid,
+  //   password,
+  //   hidden,
+  // });
 
   // Sample WiFi network data
   const [network, setNetwork] = createSignal({
@@ -106,13 +115,43 @@ function WifiPage(props: { wifi: NostrEvent }) {
       <div class="mb-6">
         <h1 class="text-2xl font-bold text-blue-600">{name}</h1>
 
+        {/* <div class="flex gap-2">
+          <a
+            href={link}
+            class="bg-blue-500 text-white font-lg px-8 py-2 w-full text-center rounded-full cursor-pointer"
+          >
+            Connect
+          </a>
+        </div> */}
+
+        <div class="flex gap-2 items-center">
+          <UserAvatar pubkey={props.wifi.pubkey} />
+          <UserName
+            class="text-lg font-bold truncate"
+            pubkey={props.wifi.pubkey}
+          />
+
+          <UserFollowButton
+            pubkey={props.wifi.pubkey}
+            class="ml-auto bg-blue-500 text-white px-4 py-2 rounded-full cursor-pointer"
+          />
+        </div>
+
         <div class="mt-3 grid grid-cols-2 gap-2">
           <div class="font-semibold">SSID:</div>
-          <div>{ssid}</div>
+          <div class="flex items-center gap-2">
+            <code class="font-mono bg-gray-50 px-2 py-1 rounded-sm select-all flex-grow">
+              {ssid}
+            </code>
+            {ssid && <CopyButton text={ssid} />}
+          </div>
 
           <div class="font-semibold">Password:</div>
-          <div class="font-mono bg-gray-50 px-2 py-1 rounded-sm">
-            {password}
+          <div class="flex items-center gap-2">
+            <code class="font-mono bg-gray-50 px-2 py-1 rounded-sm select-all flex-grow">
+              {password}
+            </code>
+            {password && <CopyButton text={password} />}
           </div>
         </div>
 
@@ -176,19 +215,24 @@ function WifiPage(props: { wifi: NostrEvent }) {
   );
 }
 
-export default function WifiView(_props: RouteSectionProps) {
+export default function WifiView(props: RouteSectionProps) {
+  const account = from(accounts.active$);
   const navigate = useNavigate();
-  const { naddr } = useParams();
+  const { naddr } = props.params;
   if (!naddr) return <Navigate href="/" />;
 
   const decoded = nip19.decode(naddr);
   if (decoded.type !== "naddr") return <Navigate href="/" />;
 
   const pointer = decoded.data;
+  const relays = from(appRelays);
 
   // load the wifi event
   createEffect(() => {
-    replaceableLoader.next(pointer);
+    replaceableLoader.next({
+      ...pointer,
+      relays: mergeRelaySets(pointer.relays, relays()),
+    });
   });
 
   const wifi = from(
@@ -201,9 +245,18 @@ export default function WifiView(_props: RouteSectionProps) {
         {wifi() ? <WifiPage wifi={wifi()!} /> : <div>Loading...</div>}
       </main>
 
-      <footer class="bg-blue-500 text-white p-2 flex items-center">
+      <footer class="bg-blue-500 text-white p-2 flex items-center gap-2">
         <button class="p-2 cursor-pointer" onClick={() => navigate(-1)}>
           <BackIcon />
+        </button>
+
+        <div class="flex-grow"></div>
+
+        {wifi() && account()?.pubkey === wifi()?.pubkey && (
+          <button class="p-2 cursor-pointer">Edit</button>
+        )}
+        <button class="p-2 cursor-pointer">
+          <QrCodeIcon />
         </button>
       </footer>
     </>

@@ -45,3 +45,22 @@ export function parseWifiQrCode(data: string): WifiCode | null {
 
   return wifiDetails;
 }
+
+export function createWifiQrCode(wifi: WifiCode) {
+  const link = `WIFI:`;
+  const parts: string[] = [];
+
+  if (!wifi.ssid) throw new Error("Missing SSID");
+
+  parts.push(`S:${wifi.ssid}`);
+
+  if (wifi.securityType) parts.push(`T:${wifi.securityType}`);
+  else parts.push(`T:nopass`);
+
+  if (wifi.password) parts.push(`P:${wifi.password}`);
+  else parts.push(`P:`);
+
+  if (wifi.hidden !== undefined) parts.push(`H:${String(wifi.hidden)}`);
+
+  return link + parts.join(";") + ";;";
+}

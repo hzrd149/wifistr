@@ -6,11 +6,7 @@ import { queryStore } from "../services/stores";
 import { replaceableLoader } from "../services/loaders";
 import { appRelays } from "../services/lifestyle";
 
-export default function UserAvatar(props: {
-  pubkey: string;
-  class?: string;
-  size?: number;
-}) {
+export default function UserName(props: { pubkey: string; class?: string }) {
   // Create signal from the profile query observable
   const profile = from(queryStore.createQuery(ProfileQuery, props.pubkey));
   const relays = from(appRelays);
@@ -25,12 +21,8 @@ export default function UserAvatar(props: {
   });
 
   return (
-    <img
-      src={profile()?.picture || `https://robohash.org/${props.pubkey}`}
-      alt={profile()?.name || "anon"}
-      class={`rounded-full object-cover ${props.class || ""}`}
-      width={props.size || 40}
-      height={props.size || 40}
-    />
+    <span class={props.class}>
+      {profile()?.display_name || profile()?.name || "anon"}
+    </span>
   );
 }

@@ -28,7 +28,7 @@ function CreateWifiView(props: RouteSectionProps) {
   const [hidden, setHidden] = createSignal(
     location.state?.wifi?.hidden ?? false,
   );
-  const [portal, setPortal] = createSignal(false);
+  const [captive, setCaptive] = createSignal(false);
 
   const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ function CreateWifiView(props: RouteSectionProps) {
         ssid: ssid(),
         securityType: securityType(),
         password: password(),
-        portal: portal(),
+        captive: captive(),
         hidden: hidden(),
       };
       const location = wifiLocation();
@@ -134,15 +134,15 @@ function CreateWifiView(props: RouteSectionProps) {
           </div>
           <div class="flex items-center">
             <input
-              id="portal"
+              id="captive"
               type="checkbox"
               class="mr-2"
-              checked={portal()}
-              onChange={(e) => setPortal(e.currentTarget.checked)}
+              checked={captive()}
+              onChange={(e) => setCaptive(e.currentTarget.checked)}
               disabled={save.loading()}
             />
-            <label for="portal" class="font-semibold">
-              Captive Portal
+            <label for="captive" class="font-semibold">
+              Captive portal
             </label>
           </div>
         </form>

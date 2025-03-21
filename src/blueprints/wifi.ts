@@ -13,7 +13,7 @@ export function WifiBlueprint(
     ssid: string;
     password?: string;
     security?: string;
-    portal?: boolean;
+    captive?: boolean;
     hidden?: boolean;
   },
   location: string | GeohashLatLng,

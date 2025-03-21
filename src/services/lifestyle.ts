@@ -1,9 +1,9 @@
+import { combineLatest, filter, map, of, startWith, switchMap } from "rxjs";
 import { kinds } from "nostr-tools";
 import { MailboxesQuery } from "applesauce-core/queries";
 
 import { accounts } from "./accounts";
 import { replaceableLoader } from "./loaders";
-import { combineLatest, filter, of, startWith, switchMap } from "rxjs";
 import { queryStore } from "./stores";
 import { rxNostr } from "./nostr";
 import { defaultRelays } from "./settings";
@@ -14,6 +14,17 @@ export const activeMailboxes = accounts.active$.pipe(
     queryStore.createQuery(MailboxesQuery, account.pubkey),
   ),
   startWith(undefined),
+);
+
+/** either the users outboxes or the default relays */
+export const appRelays = accounts.active$.pipe(
+  switchMap((account) =>
+    account
+      ? queryStore
+          .createQuery(MailboxesQuery, account.pubkey)
+          .pipe(map((mailboxes) => mailboxes?.outboxes))
+      : defaultRelays,
+  ),
 );
 
 // load the users metadata, contacts, and relay list when the account changes and the mailboxes are loaded
