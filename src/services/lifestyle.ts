@@ -6,6 +6,8 @@ import { replaceableLoader } from "./loaders";
 import { combineLatest, filter, of, startWith, switchMap } from "rxjs";
 import { queryStore } from "./stores";
 import { rxNostr } from "./nostr";
+import { DEFAULT_RELAYS } from "../const";
+import { defaultRelays } from "./settings";
 
 export const activeMailboxes = accounts.active$.pipe(
   filter((account) => !!account),
@@ -42,20 +44,21 @@ combineLatest([accounts.active$, activeMailboxes]).subscribe(
 );
 
 // set the default relays when the account changes
-accounts.active$
-  .pipe(
+combineLatest([
+  accounts.active$.pipe(
     switchMap((account) =>
       account
         ? queryStore.createQuery(MailboxesQuery, account.pubkey)
         : of(undefined),
     ),
-  )
-  .subscribe((mailboxes) => {
-    if (mailboxes) {
-      console.log("Setting default relays to", mailboxes.outboxes);
-      rxNostr.setDefaultRelays(mailboxes.outboxes);
-    } else {
-      console.log("Clearing default relays");
-      rxNostr.setDefaultRelays([]);
-    }
-  });
+  ),
+  defaultRelays,
+]).subscribe(([mailboxes, defaultRelays]) => {
+  if (mailboxes) {
+    console.log("Setting default relays to", mailboxes.outboxes);
+    rxNostr.setDefaultRelays(mailboxes.outboxes);
+  } else {
+    console.log("Setting default relays to", defaultRelays);
+    rxNostr.setDefaultRelays(defaultRelays);
+  }
+});

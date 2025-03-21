@@ -1,5 +1,5 @@
 import { BehaviorSubject } from "rxjs";
-import { DEFAULT_LOOKUP_RELAYS } from "../const";
+import { DEFAULT_LOOKUP_RELAYS, DEFAULT_RELAYS } from "../const";
 
 // save and load settings from localStorage
 function persist<T>(key: string, subject: BehaviorSubject<T>) {
@@ -16,3 +16,6 @@ export const lookupRelays = new BehaviorSubject<string[]>(
   DEFAULT_LOOKUP_RELAYS,
 );
 persist("lookup-relays", lookupRelays);
+
+export const defaultRelays = new BehaviorSubject<string[]>(DEFAULT_RELAYS);
+persist("default-relays", defaultRelays);

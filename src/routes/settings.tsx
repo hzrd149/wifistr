@@ -11,7 +11,7 @@ import {
   removeOutboxRelay,
 } from "applesauce-factory/operations/tag";
 
-import { lookupRelays } from "../services/settings";
+import { defaultRelays, lookupRelays } from "../services/settings";
 import { BackIcon, RemoveIcon } from "../components/icons";
 import { publish, rxNostr } from "../services/nostr";
 import { eventStore, queryStore } from "../services/stores";
@@ -169,6 +169,38 @@ function MailboxSettings() {
   );
 }
 
+function DefaultRelaysSettings() {
+  const relays = from(defaultRelays);
+
+  const addRelay = (url: string) => {
+    const current = defaultRelays.getValue();
+    if (!current.includes(url)) {
+      defaultRelays.next([...current, url]);
+    }
+  };
+
+  const removeRelay = (url: string) => {
+    const current = defaultRelays.getValue();
+    defaultRelays.next(current.filter((relay) => relay !== url));
+  };
+
+  return (
+    <div class="max-w-md mx-auto">
+      <h1 class="text-2xl font-bold my-4">Data Relays</h1>
+
+      <div class="border rounded bg-white">
+        <For each={relays()}>
+          {(relay) => (
+            <RelayRow url={relay} onRemove={() => removeRelay(relay)} />
+          )}
+        </For>
+      </div>
+
+      <AddRelayForm onSubmit={addRelay} />
+    </div>
+  );
+}
+
 function LookupSettings() {
   const relays = from(lookupRelays);
   const addLookupRelay = async (url: string) => {
@@ -201,12 +233,13 @@ function LookupSettings() {
 
 function SettingsView() {
   const navigate = useNavigate();
+  const account = from(accounts.active$);
 
   return (
     <>
       <div class="flex-grow p-4">
         <LookupSettings />
-        <MailboxSettings />
+        {account() ? <MailboxSettings /> : <DefaultRelaysSettings />}
       </div>
 
       <footer class="bg-blue-500 text-white p-2 flex items-center">

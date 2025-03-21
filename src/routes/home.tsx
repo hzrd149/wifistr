@@ -19,6 +19,7 @@ import {
 import { activeMailboxes } from "../services/lifestyle";
 import { queryStore } from "../services/stores";
 import { WIFI_NETWORK_KIND } from "../const";
+import { defaultRelays } from "../services/settings";
 
 const LOADER_MAX_ZOOM = 13;
 
@@ -48,10 +49,9 @@ function HomeView(props: RouteSectionProps) {
   const mailboxes = from(activeMailboxes);
 
   createEffect(() => {
-    const relays = mailboxes()?.outboxes;
+    const relays = mailboxes()?.outboxes || defaultRelays.getValue();
 
     if (zoom() < LOADER_MAX_ZOOM) return;
-    if (!relays) return;
 
     // trigger loaders when geohashes change
     console.log(`Loading events for`, geohashes());
