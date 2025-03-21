@@ -4,6 +4,20 @@ import { safeParse } from "applesauce-core/helpers";
 import L, { LatLng } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
 
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+console.log(markerIcon);
+console.log(markerIcon2x);
+console.log(markerShadow);
+
+const MarkerIcon = L.Icon.extend({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+
 type Marker = LatLng & {
   popup?: string;
 };
@@ -49,7 +63,9 @@ function Map(props: {
 
     markersLayer.clearLayers();
     props.markers?.forEach(({ lat, lng, popup }) => {
-      const marker = L.marker([lat, lng]);
+      const marker = L.marker([lat, lng], {
+        icon: new MarkerIcon(),
+      });
       if (popup) {
         marker.bindPopup(popup);
       }
