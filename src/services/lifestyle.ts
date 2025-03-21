@@ -6,7 +6,6 @@ import { replaceableLoader } from "./loaders";
 import { combineLatest, filter, of, startWith, switchMap } from "rxjs";
 import { queryStore } from "./stores";
 import { rxNostr } from "./nostr";
-import { DEFAULT_RELAYS } from "../const";
 import { defaultRelays } from "./settings";
 
 export const activeMailboxes = accounts.active$.pipe(
