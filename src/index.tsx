@@ -16,6 +16,8 @@ import SigninView from "./routes/signin";
 import SettingsView from "./routes/settings";
 import ProfileView from "./routes/profile";
 import NotFoundView from "./routes/404";
+import WifiView from "./routes/wifi";
+
 const root = document.getElementById("root");
 
 render(
@@ -31,6 +33,7 @@ render(
         <Route path="/signin" component={SigninView} />
         <Route path="/settings" component={SettingsView} />
         <Route path="/profile" component={ProfileView} />
+        <Route path="/wifi/:naddr" component={WifiView} />
         <Route path="*" component={NotFoundView} />
       </Router>
     </>

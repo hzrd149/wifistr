@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@solid-primitives/scheduled": "^1.5.0",
     "@solidjs/router": "^0.15.3",
     "applesauce-accounts": "^0.12.0",
     "applesauce-actions": "^0.12.0",

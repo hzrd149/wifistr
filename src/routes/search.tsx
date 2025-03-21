@@ -1,9 +1,10 @@
 import { createResource, createSignal, For, Match, Switch } from "solid-js";
 import { useNavigate } from "@solidjs/router";
+import { matchSorter } from "match-sorter";
+import { debounce } from "@solid-primitives/scheduled";
 
 import { BackIcon } from "../components/icons";
 import { City, getSearchIndex } from "../services/search";
-import { matchSorter } from "match-sorter";
 
 function SearchView() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function SearchView() {
 
   const [cities] = createResource(getSearchIndex);
 
-  const search = () => {
+  const search = debounce(() => {
     cities();
     if (cities.state !== "ready") return;
 
@@ -28,7 +29,7 @@ function SearchView() {
     } else {
       setResults([]);
     }
-  };
+  }, 500);
 
   const handleInputChange = (e: Event) => {
     const target = e.target as HTMLInputElement;

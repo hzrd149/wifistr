@@ -1,11 +1,12 @@
 import { createEffect, onCleanup } from "solid-js";
-import { safeParse } from "applesauce-core/helpers";
+import { getReplaceableIdentifier, safeParse } from "applesauce-core/helpers";
+import { useNavigate } from "@solidjs/router";
 import ngeohash from "ngeohash";
 
 import L, { LatLng, LatLngBounds } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
 
-import { NostrEvent } from "nostr-tools";
+import { nip19, NostrEvent } from "nostr-tools";
 import { WifiMarkerIcon } from "./markers";
 
 function WifiMap(props: {
@@ -17,6 +18,7 @@ function WifiMap(props: {
   onZoomChange?: (zoom: number) => void;
   onBBoxChange?: (bbox: LatLngBounds) => void;
 }) {
+  const navigate = useNavigate();
   let mapContainer: HTMLDivElement | undefined;
   let map: L.Map | undefined;
   const markersLayer = L.layerGroup();
@@ -118,6 +120,15 @@ function WifiMap(props: {
 
         const marker = L.marker([location.latitude, location.longitude], {
           icon: new WifiMarkerIcon(),
+        });
+        marker.on("click", () => {
+          navigate(
+            `/wifi/${nip19.naddrEncode({
+              kind: network.kind,
+              pubkey: network.pubkey,
+              identifier: getReplaceableIdentifier(network),
+            })}`,
+          );
         });
         marker.addTo(markersLayer);
       }
