@@ -17,7 +17,7 @@ A wifi hot-spot event is a kind `30784` event with a human readable name and a d
     ["c", "true"], // ["c", "false"]
 
     // optional tags
-    // the security type of the wifi hot-spot ( WEP, WPA, WPA2, WPA3, NONE ) ( optional )
+    // the security type of the wifi hot-spot ( WEP, WPA, WPA2, WPA3, nopass ) ( optional )
     ["security", "WPA2"],
     // the password of the wifi hot-spot ( optional )
     ["password", "coffeeshop12345"],

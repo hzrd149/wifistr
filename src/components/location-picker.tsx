@@ -4,6 +4,8 @@ import L, { LatLng } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
 
 function LocationPicker(props: {
+  center?: LatLng;
+  zoom?: number;
   onPick: (latLng: LatLng) => void;
   class?: string;
 }) {
@@ -14,7 +16,10 @@ function LocationPicker(props: {
     if (!mapContainer) return;
 
     if (!map) {
-      map = L.map(mapContainer).setView([51.505, -0.09], 17);
+      map = L.map(mapContainer).setView(
+        props.center ?? [51.505, -0.09],
+        props.zoom ?? 17,
+      );
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
@@ -50,7 +55,8 @@ function LocationPicker(props: {
       });
       map.addControl(locate);
 
-      locate.start();
+      // get the users position if no center is provided
+      if (!props.center) locate.start();
       return () => {
         locate.stop();
       };

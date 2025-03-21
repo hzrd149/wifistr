@@ -1,43 +1,45 @@
 import { kinds } from "nostr-tools";
+import { MailboxesQuery } from "applesauce-core/queries";
+
 import { accounts } from "./accounts";
 import { replaceableLoader } from "./loaders";
 import { combineLatest, filter, of, startWith, switchMap } from "rxjs";
 import { queryStore } from "./stores";
-import { MailboxesQuery } from "applesauce-core/queries";
 import { rxNostr } from "./nostr";
 
-// load the users metadata, contacts, and relay list when the account changes and the mailboxes are loaded
-combineLatest([
-  accounts.active$,
-  accounts.active$.pipe(
-    filter((account) => !!account),
-    switchMap((account) =>
-      queryStore.createQuery(MailboxesQuery, account.pubkey),
-    ),
-    startWith(undefined),
+export const activeMailboxes = accounts.active$.pipe(
+  filter((account) => !!account),
+  switchMap((account) =>
+    queryStore.createQuery(MailboxesQuery, account.pubkey),
   ),
-]).subscribe(([account, mailboxes]) => {
-  if (!account) return;
+  startWith(undefined),
+);
 
-  const relays = mailboxes && mailboxes.outboxes;
+// load the users metadata, contacts, and relay list when the account changes and the mailboxes are loaded
+combineLatest([accounts.active$, activeMailboxes]).subscribe(
+  ([account, mailboxes]) => {
+    if (!account) return;
 
-  // load the users metadata
-  replaceableLoader.next({
-    pubkey: account.pubkey,
-    kind: kinds.Metadata,
-    relays,
-  });
-  replaceableLoader.next({
-    pubkey: account.pubkey,
-    kind: kinds.Contacts,
-    relays,
-  });
-  replaceableLoader.next({
-    pubkey: account.pubkey,
-    kind: kinds.RelayList,
-    relays,
-  });
-});
+    const relays = mailboxes && mailboxes.outboxes;
+
+    // load the users metadata
+    replaceableLoader.next({
+      pubkey: account.pubkey,
+      kind: kinds.Metadata,
+      relays,
+    });
+    replaceableLoader.next({
+      pubkey: account.pubkey,
+      kind: kinds.Contacts,
+      relays,
+    });
+    replaceableLoader.next({
+      pubkey: account.pubkey,
+      kind: kinds.RelayList,
+      relays,
+    });
+  },
+);
 
 // set the default relays when the account changes
 accounts.active$

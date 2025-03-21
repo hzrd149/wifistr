@@ -13,8 +13,8 @@
     "@solidjs/router": "^0.15.3",
     "applesauce-accounts": "^0.12.0",
     "applesauce-actions": "^0.12.0",
-    "applesauce-core": "^0.12.0",
-    "applesauce-factory": "^0.12.0",
+    "applesauce-core": "^0.12.1",
+    "applesauce-factory": "^0.12.2",
     "applesauce-loaders": "^0.12.0",
     "applesauce-signers": "^0.12.0",
     "leaflet": "^1.9.4",
@@ -28,21 +28,21 @@
     "rxjs": "^7.8.2",
     "solid-js": "^1.9.5",
     "solid-toast": "^0.5.0",
-    "tailwindcss": "^4.0.14",
+    "tailwindcss": "^4.0.15",
     "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.14",
+    "@tailwindcss/vite": "^4.0.15",
     "@types/leaflet": "^1.9.16",
     "@types/leaflet.locatecontrol": "^0.82.0",
     "@types/ngeohash": "^0.6.8",
     "cities-with-1000": "^1.0.4",
     "prettier": "^3.5.3",
     "solid-devtools": "^0.33.0",
-    "typescript": "~5.7.2",
-    "vite": "^6.2.0",
+    "typescript": "~5.7.3",
+    "vite": "^6.2.2",
     "vite-plugin-pwa": "^0.21.1",
-    "vite-plugin-solid": "^2.11.2"
+    "vite-plugin-solid": "^2.11.6"
   },
   "packageManager": "pnpm@9.15.6"
 }

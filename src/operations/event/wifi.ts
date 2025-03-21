@@ -20,7 +20,7 @@ export function includeWifiTags(wifi: {
     if (wifi.name) tags = ensureSingletonTag(tags, ["name", wifi.name], true);
     tags = ensureSingletonTag(tags, ["ssid", wifi.ssid], true);
     tags = ensureSingletonTag(tags, ["h", String(!!wifi.hidden)], true);
-    tags = ensureSingletonTag(tags, ["p", String(!!wifi.portal)], true);
+    tags = ensureSingletonTag(tags, ["c", String(!!wifi.portal)], true);
 
     if (wifi.password)
       tags = ensureSingletonTag(tags, ["password", wifi.password], true);

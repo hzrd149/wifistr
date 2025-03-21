@@ -1,32 +1,21 @@
 import { createEffect, onCleanup } from "solid-js";
 import { safeParse } from "applesauce-core/helpers";
+import ngeohash from "ngeohash";
 
-import L, { LatLng } from "leaflet";
+import L, { LatLng, LatLngBounds } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
 
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { NostrEvent } from "nostr-tools";
+import { WifiMarkerIcon } from "./markers";
 
-console.log(markerIcon);
-console.log(markerIcon2x);
-console.log(markerShadow);
-
-const MarkerIcon = L.Icon.extend({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
-
-type Marker = LatLng & {
-  popup?: string;
-};
-
-function Map(props: {
-  markers?: Marker[];
+function WifiMap(props: {
+  networks?: NostrEvent[];
   class?: string;
   center?: LatLng;
-  cache?: string;
+  cacheView?: string;
+  onCenterChange?: (center: LatLng) => void;
+  onZoomChange?: (zoom: number) => void;
+  onBBoxChange?: (bbox: LatLngBounds) => void;
 }) {
   let mapContainer: HTMLDivElement | undefined;
   let map: L.Map | undefined;
@@ -59,29 +48,28 @@ function Map(props: {
       map.addControl(locate);
 
       markersLayer.addTo(map);
-    }
 
-    markersLayer.clearLayers();
-    props.markers?.forEach(({ lat, lng, popup }) => {
-      const marker = L.marker([lat, lng], {
-        icon: new MarkerIcon(),
+      // update bbox when map moves or zooms
+      map.on("moveend", () => {
+        if (props.onBBoxChange) props.onBBoxChange(map!.getBounds());
+        if (props.onCenterChange) props.onCenterChange(map!.getCenter());
       });
-      if (popup) {
-        marker.bindPopup(popup);
-      }
-      marker.addTo(markersLayer);
-    });
+      map.on("zoomend", () => {
+        if (props.onBBoxChange) props.onBBoxChange?.(map!.getBounds());
+        if (props.onZoomChange) props.onZoomChange?.(map!.getZoom());
+      });
+    }
   });
 
   // save map center when move
   createEffect(() => {
     props.center;
 
-    if (props.cache && map) {
+    if (props.cacheView && map) {
       // load center from cache
       if (!props.center) {
         const cached = safeParse<{ center: LatLng; zoom: number }>(
-          localStorage.getItem(props.cache + "-map-position") ?? "",
+          localStorage.getItem(props.cacheView + "-map-position") ?? "",
         );
         if (cached) {
           map.setView(cached.center, cached.zoom);
@@ -91,7 +79,7 @@ function Map(props: {
       // save updates to local storage
       const listener = () => {
         localStorage.setItem(
-          props.cache + "-map-position",
+          props.cacheView + "-map-position",
           JSON.stringify({ center: map!.getCenter(), zoom: map!.getZoom() }),
         );
       };
@@ -112,6 +100,30 @@ function Map(props: {
     }
   });
 
+  createEffect(() => {
+    props.networks;
+
+    // update the wifi networks on the map
+    if (map && props.networks) {
+      markersLayer.clearLayers();
+
+      for (const network of props.networks) {
+        // get the most precise geohash
+        const geohash = network.tags
+          .filter((t) => t[0] === "g" && t[1])
+          .reduce((g, t) => (t[1].length > g.length ? t[1] : g), "");
+        if (!geohash) continue;
+
+        const location = ngeohash.decode(geohash);
+
+        const marker = L.marker([location.latitude, location.longitude], {
+          icon: new WifiMarkerIcon(),
+        });
+        marker.addTo(markersLayer);
+      }
+    }
+  });
+
   onCleanup(() => {
     if (map) map.remove();
   });
@@ -125,4 +137,4 @@ function Map(props: {
   );
 }
 
-export default Map;
+export default WifiMap;

@@ -1,6 +1,8 @@
 import { createRxNostr, noopVerifier } from "rx-nostr";
-import { eventStore } from "./stores";
+import { lastValueFrom } from "rxjs";
 import { NostrEvent } from "nostr-tools";
+
+import { eventStore } from "./stores";
 
 export const rxNostr = createRxNostr({
   // skip verification here because we are going to verify events at the event store
@@ -8,7 +10,12 @@ export const rxNostr = createRxNostr({
   verifier: noopVerifier,
 });
 
-export function publish(event: NostrEvent, relays?: string[]) {
-  rxNostr.send(event, { on: { relays } });
+export function publish(event: NostrEvent, relays?: string[]): Promise<void> {
+  console.log("Publishing", event);
+
   eventStore.add(event);
+
+  return lastValueFrom(
+    relays ? rxNostr.send(event, { on: { relays } }) : rxNostr.send(event),
+  ).then(() => {});
 }

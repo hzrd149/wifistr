@@ -1,19 +1,21 @@
 import { createSignal } from "solid-js";
 import { Location, RouteSectionProps, useNavigate } from "@solidjs/router";
 import { LatLng } from "leaflet";
-import { lastValueFrom } from "rxjs";
 
 import { BackIcon, QrCodeIcon } from "../components/icons";
 import { WifiCode } from "../helpers/qr-code";
 import LocationPicker from "../components/location-picker";
 import { factory } from "../services/actions";
 import { WifiBlueprint } from "../blueprints/wifi";
-import { eventStore } from "../services/stores";
-import { rxNostr } from "../services/nostr";
+import { publish } from "../services/nostr";
 import { toastOperation } from "../helpers/toast";
 
 function CreateWifiView(props: RouteSectionProps) {
-  const location: Location<{ wifi?: WifiCode }> = props.location;
+  const location: Location<{
+    wifi?: WifiCode;
+    center?: LatLng;
+    zoom?: number;
+  }> = props.location;
 
   const [wifiLocation, setWifiLatlng] = createSignal<LatLng | undefined>();
   const [ssid, setSsid] = createSignal(location.state?.wifi?.ssid ?? "");
@@ -47,9 +49,7 @@ function CreateWifiView(props: RouteSectionProps) {
       const draft = await factory.create(WifiBlueprint, wifiDetails, location);
       const signed = await factory.sign(draft);
 
-      eventStore.add(signed);
-      await lastValueFrom(rxNostr.send(signed));
-
+      await publish(signed);
       navigate("/");
     },
     {
@@ -62,7 +62,11 @@ function CreateWifiView(props: RouteSectionProps) {
   return (
     <>
       <main class="flex-col flex-grow flex overflow-auto">
-        <LocationPicker onPick={setWifiLatlng} />
+        <LocationPicker
+          onPick={setWifiLatlng}
+          center={location.state?.center}
+          zoom={location.state?.zoom}
+        />
         <form
           id="wifi-network"
           class="space-y-2 p-4 border-t"
@@ -93,7 +97,7 @@ function CreateWifiView(props: RouteSectionProps) {
               value={password()}
               onInput={(e) => setPassword(e.currentTarget.value)}
               disabled={save.loading()}
-              required={securityType() !== "none"}
+              required={securityType() !== "nopass"}
             />
           </div>
           <div class="flex flex-col">
@@ -112,7 +116,7 @@ function CreateWifiView(props: RouteSectionProps) {
               <option value="WEP">WEP</option>
               <option value="WPA2">WPA2</option>
               <option value="WPA3">WPA3</option>
-              <option value="none">None</option>
+              <option value="nopass">None</option>
             </select>
           </div>
           <div class="flex items-center">
