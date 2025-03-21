@@ -14,7 +14,7 @@ export default defineConfig({
     tailwindcss(),
     devtools({ autoname: true }),
     VitePWA({
-      injectRegister: "auto",
+      injectRegister: "script-defer",
       registerType: "autoUpdate",
       workbox: {
         clientsClaim: true,
