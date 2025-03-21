@@ -2,6 +2,15 @@ import { createEffect, onCleanup } from "solid-js";
 
 import L, { LatLng } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
+import marker from "leaflet/dist/images/marker-icon.png?url";
+import shadow from "leaflet/dist/images/marker-shadow.png?url";
+
+export const MarkerIcon = L.Icon.extend({
+  options: {
+    iconUrl: marker,
+    shadowUrl: shadow,
+  },
+});
 
 function LocationPicker(props: {
   center?: LatLng;
@@ -29,6 +38,7 @@ function LocationPicker(props: {
 
       let marker = L.marker(map.getCenter(), {
         draggable: false,
+        icon: new MarkerIcon(),
       }).addTo(map);
 
       map.on("move", () => {
