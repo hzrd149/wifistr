@@ -253,9 +253,11 @@ export default function WifiView(props: RouteSectionProps) {
         <div class="flex-grow"></div>
 
         {wifi() && account()?.pubkey === wifi()?.pubkey && (
-          <button class="p-2 cursor-pointer">Edit</button>
+          <button class="p-2 cursor-pointer" aria-label="edit">
+            Edit
+          </button>
         )}
-        <button class="p-2 cursor-pointer">
+        <button class="p-2 cursor-pointer" aria-label="show qr code">
           <QrCodeIcon />
         </button>
       </footer>

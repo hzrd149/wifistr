@@ -101,6 +101,7 @@ function HomeView(props: RouteSectionProps) {
                 state: { center: center(), zoom: zoom() },
               })
             }
+            aria-label="create"
           >
             <PlusIcon />
           </button>

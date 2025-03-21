@@ -8,6 +8,7 @@ export default function NotFoundView() {
       <A
         href="/"
         class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        aria-label="return home"
       >
         Return Home
       </A>

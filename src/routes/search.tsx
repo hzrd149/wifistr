@@ -92,6 +92,7 @@ function SearchView() {
         <button
           onClick={() => navigate(-1)}
           class="bg-blue-500 text-white rounded p-2 cursor-pointer"
+          aria-label="back"
         >
           <BackIcon />
         </button>

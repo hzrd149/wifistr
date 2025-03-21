@@ -82,10 +82,10 @@ export default function WelcomeView() {
       </main>
 
       <footer class="flex justify-between p-2 flex-shrink-0">
-        <A href="/settings" class="p-2">
+        <A href="/settings" class="p-2" aria-label="settings">
           <SettingsIcon />
         </A>
-        <A href="/" class="p-2">
+        <A href="/" class="p-2" aria-label="skip">
           <NextIcon />
         </A>
       </footer>

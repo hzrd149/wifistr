@@ -53,10 +53,14 @@ function SigninView() {
       </form>
 
       <footer class="flex justify-between p-2 flex-shrink-0">
-        <button onClick={() => navigate(-1)} class="p-2 cursor-pointer">
+        <button
+          onClick={() => navigate(-1)}
+          class="p-2 cursor-pointer"
+          aria-label="back"
+        >
           <BackIcon />
         </button>
-        <A href="/settings" class="p-2">
+        <A href="/settings" class="p-2" aria-label="settings">
           <SettingsIcon />
         </A>
       </footer>

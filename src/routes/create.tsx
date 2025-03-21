@@ -149,11 +149,19 @@ function CreateWifiView(props: RouteSectionProps) {
       </main>
 
       <footer class="bg-blue-500 text-white p-2 flex items-center">
-        <button class="p-2 cursor-pointer" onClick={() => navigate(-1)}>
+        <button
+          class="p-2 cursor-pointer"
+          onClick={() => navigate(-1)}
+          aria-label="back"
+        >
           <BackIcon />
         </button>
         <div class="flex-grow"></div>
-        <a class="rounded text-white p-2 cursor-pointer" href="/scan">
+        <a
+          class="rounded text-white p-2 cursor-pointer"
+          href="/scan"
+          aria-label="scan qr code"
+        >
           <QrCodeIcon />
         </a>
         <button
@@ -161,6 +169,7 @@ function CreateWifiView(props: RouteSectionProps) {
           form="wifi-network"
           class="bg-blue-500 text-white rounded py-2 px-4 cursor-pointer font-bold text-md"
           disabled={save.loading()}
+          aria-label="save network"
         >
           {save.loading() ? "Saving..." : "Save"}
         </button>

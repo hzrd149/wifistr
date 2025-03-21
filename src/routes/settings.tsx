@@ -243,7 +243,11 @@ function SettingsView() {
       </div>
 
       <footer class="bg-blue-500 text-white p-2 flex items-center">
-        <button onClick={() => navigate(-1)} class="p-2 cursor-pointer">
+        <button
+          onClick={() => navigate(-1)}
+          class="p-2 cursor-pointer"
+          aria-label="back"
+        >
           <BackIcon />
         </button>
       </footer>

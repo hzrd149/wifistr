@@ -47,7 +47,7 @@ function ScanQrCodeView() {
   });
 
   return (
-    <div class="h-dvh overflow-hidden flex flex-col">
+    <>
       <div class="flex-grow">
         <video
           ref={videoRef}
@@ -57,11 +57,15 @@ function ScanQrCodeView() {
         ></video>
       </div>
       <footer class="bg-blue-500 text-white p-2 flex items-center">
-        <button class="p-2 cursor-pointer" onClick={() => navigate(-1)}>
+        <button
+          class="p-2 cursor-pointer"
+          onClick={() => navigate(-1)}
+          aria-label="back"
+        >
           <BackIcon />
         </button>
       </footer>
-    </div>
+    </>
   );
 }
 

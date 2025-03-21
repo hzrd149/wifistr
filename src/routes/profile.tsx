@@ -66,11 +66,15 @@ function ProfileView() {
       </main>
 
       <footer class="bg-blue-500 text-white p-2 flex justify-between items-center">
-        <button onClick={() => navigate(-1)} class="p-2  cursor-pointer">
+        <button
+          onClick={() => navigate(-1)}
+          class="p-2 cursor-pointer"
+          aria-label="back"
+        >
           <BackIcon />
         </button>
 
-        <A href="/settings" class="p-2  ">
+        <A href="/settings" class="p-2" aria-label="settings">
           <SettingsIcon />
         </A>
       </footer>
