@@ -10,6 +10,7 @@
     "https://nostr.download",
     "https://blossom.primal.net"
   ],
+  "fallback": "index.html",
   "profile": {
     "name": "wifistr",
     "about": "Open wifi map powered by nostr"
