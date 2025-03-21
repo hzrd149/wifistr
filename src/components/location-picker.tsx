@@ -9,6 +9,10 @@ export const MarkerIcon = L.Icon.extend({
   options: {
     iconUrl: marker,
     shadowUrl: shadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
   },
 });
 
