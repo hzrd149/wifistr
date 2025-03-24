@@ -1,3 +1,5 @@
+import Fuse from "fuse.js";
+
 const fields = ["name", "names", "lat", "lng", "country"];
 
 export type City = {
@@ -7,14 +9,17 @@ export type City = {
   lng: number;
   country: string;
 };
-let cache: City[] | undefined = undefined;
 
-export async function getSearchIndex(): Promise<City[]> {
-  if (cache) return cache;
+export const citySearch = new Fuse<City>([], {
+  keys: ["name", "names"],
+});
+
+let loaded = false;
+export async function loadCitySearchIndex(): Promise<void> {
+  if (loaded) return;
 
   const txt = await fetch("/cities.txt").then((res) => res.text());
 
-  const cities: City[] = [];
   const lines = txt.split("\n");
   for (const line of lines) {
     const parts = line.split("\t");
@@ -29,9 +34,6 @@ export async function getSearchIndex(): Promise<City[]> {
       country: parts[fields.indexOf("country")],
     };
 
-    cities.push(city);
+    citySearch.add(city);
   }
-
-  cache = cities;
-  return cities;
 }

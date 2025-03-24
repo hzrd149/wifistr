@@ -1,4 +1,4 @@
-import { createSignal, For, from, onMount } from "solid-js";
+import { createSignal, For, from, onMount, JSX, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { TimelineQuery } from "applesauce-core/queries";
 import { getTagValue } from "applesauce-core/helpers";
@@ -19,6 +19,8 @@ import { activeMailboxes } from "../services/lifestyle";
 import { toastOperation } from "../helpers/toast";
 import { factory } from "../services/actions";
 import { accounts } from "../services/accounts";
+import { asyncAction } from "../helpers/async-action";
+import { clearCache } from "../services/cache";
 
 function RelayRow(props: { url: string; onRemove?: () => void }) {
   return (
@@ -231,6 +233,71 @@ function LookupSettings() {
   );
 }
 
+function AdvancedSettings(props: {
+  title: string;
+  children: JSX.Element;
+  defaultExpanded?: boolean;
+}) {
+  const [expanded, setExpanded] = createSignal(props.defaultExpanded || false);
+
+  return (
+    <div class="max-w-md mx-auto mt-4 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded())}
+        class="w-full p-3  flex justify-between items-center"
+      >
+        <h2 class="text-lg font-semibold">{props.title}</h2>
+        <span class="text-lg">{expanded() ? "▼" : "▶"}</span>
+      </button>
+
+      <Show when={expanded()}>
+        <div class="p-4 bg-white">{props.children}</div>
+      </Show>
+    </div>
+  );
+}
+
+function AdvancedActionsSection() {
+  const clear = asyncAction(
+    async () => {
+      await clearCache();
+    },
+    { success: "Cleared cache" },
+  );
+
+  const broadcast = asyncAction(
+    async () => {
+      for (const event of eventStore.database.events.values()) {
+        // skip relay discovery events
+        if (event.kind === 30166) continue;
+
+        await publish(event);
+      }
+    },
+    { success: "Broadcast all events" },
+  );
+
+  return (
+    <div class="grid grid-cols-2 gap-4">
+      <button
+        onClick={clear.run}
+        disabled={clear.loading()}
+        class="px-4 py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed transition cursor-pointer"
+      >
+        {clear.loading() ? "Clearing..." : "Clear Cache"}
+      </button>
+
+      <button
+        onClick={broadcast.run}
+        disabled={broadcast.loading()}
+        class="px-4 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:bg-green-300 disabled:cursor-not-allowed transition cursor-pointer"
+      >
+        {broadcast.loading() ? "Broadcasting..." : "Broadcast All"}
+      </button>
+    </div>
+  );
+}
+
 function SettingsView() {
   const navigate = useNavigate();
   const account = from(accounts.active$);
@@ -240,6 +307,10 @@ function SettingsView() {
       <div class="flex-grow p-4">
         <LookupSettings />
         {account() ? <MailboxSettings /> : <DefaultRelaysSettings />}
+
+        <AdvancedSettings title="Advanced Settings">
+          <AdvancedActionsSection />
+        </AdvancedSettings>
       </div>
 
       <footer class="bg-blue-500 text-white p-2 flex items-center">

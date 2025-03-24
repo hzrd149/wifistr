@@ -1,5 +1,5 @@
 import { isFromCache } from "applesauce-core/helpers";
-import { openDB, getEventsForFilters, addEvents } from "nostr-idb";
+import { openDB, getEventsForFilters, addEvents, clearDB } from "nostr-idb";
 import { Filter, NostrEvent } from "nostr-tools";
 import { from, Subject } from "rxjs";
 import { bufferTime, distinct, filter, mergeMap } from "rxjs/operators";
@@ -9,6 +9,10 @@ export function cacheRequest(filters: Filter[]) {
   return from(getEventsForFilters(db, filters)).pipe(
     mergeMap((events) => events),
   );
+}
+
+export function clearCache() {
+  return clearDB(db);
 }
 
 export const cacheEvent = new Subject<NostrEvent>();
