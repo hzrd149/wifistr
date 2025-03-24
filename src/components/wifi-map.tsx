@@ -1,5 +1,5 @@
 import { createEffect, onCleanup } from "solid-js";
-import { getReplaceableIdentifier, safeParse } from "applesauce-core/helpers";
+import { safeParse } from "applesauce-core/helpers";
 import { useNavigate } from "@solidjs/router";
 import ngeohash from "ngeohash";
 

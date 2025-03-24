@@ -1,5 +1,5 @@
 import { NostrEvent } from "nostr-tools";
-import { createSignal, from, For, onMount, createEffect } from "solid-js";
+import { createSignal, from, For, createEffect } from "solid-js";
 import { CommentBlueprint } from "applesauce-factory/blueprints";
 
 import { asyncAction } from "../../../helpers/async-action";
