@@ -53,9 +53,6 @@ importers:
       nostr-tools:
         specifier: ^2.11.0
         version: 2.11.0(typescript@5.7.3)
-      open-location-code:
-        specifier: ^1.0.3
-        version: 1.0.3
       qr-scanner:
         specifier: ^1.4.2
         version: 1.4.2
@@ -93,9 +90,6 @@ importers:
       '@types/ngeohash':
         specifier: ^0.6.8
         version: 0.6.8
-      '@types/open-location-code':
-        specifier: ^1.0.1
-        version: 1.0.1
       '@types/qrcode-svg':
         specifier: ^1.1.5
         version: 1.1.5
@@ -1223,9 +1217,6 @@ packages:
   '@types/offscreencanvas@2019.7.3':
     resolution: {integrity: sha512-ieXiYmgSRXUDeOntE1InxjWyvEelZGP63M+cGuquuRLuIKKT1osnkXjxev9B7d1nXSug5vpunx+gNlbVxMlC9A==}
 
-  '@types/open-location-code@1.0.1':
-    resolution: {integrity: sha512-txJKhrRpT2fw8RgZQUeT6qycBVIzRQ2zD7ecdLvc5R2QaeqSLcYIh1jxLSC+LjcpUT26Qyfw2UTttmhgk3sWmg==}
-
   '@types/qrcode-svg@1.1.5':
     resolution: {integrity: sha512-GjkD+HB8S1wrIsf3skHDtcYBjzNhTxocMbX+wG166xDkaVOnLiMUla7bLjbwxo6mMvqqWQNP0Dk8nkIeizSmnw==}
 
@@ -2047,9 +2038,6 @@ packages:
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
-
-  open-location-code@1.0.3:
-    resolution: {integrity: sha512-DBm14BSn40Ee241n80zIFXIT6+y8Tb0I+jTdosLJ8Sidvr2qONvymwqymVbHV2nS+1gkDZ5eTNpnOIVV0Kn2fw==}
 
   own-keys@1.0.1:
     resolution: {integrity: sha512-qFOyK5PjiWZd+QQIh+1jhdb9LpxTF0qs7Pm8o5QHYZ0M3vKqSqzsZaEB6oWlxZ+q2sJBMI/Ktgd2N5ZwQoRHfg==}
@@ -3761,8 +3749,6 @@ snapshots:
 
   '@types/offscreencanvas@2019.7.3': {}
 
-  '@types/open-location-code@1.0.1': {}
-
   '@types/qrcode-svg@1.1.5': {}
 
   '@types/resolve@1.20.2': {}
@@ -4789,8 +4775,6 @@ snapshots:
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
-
-  open-location-code@1.0.3: {}
 
   own-keys@1.0.1:
     dependencies:
