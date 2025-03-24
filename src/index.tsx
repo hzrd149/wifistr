@@ -20,11 +20,13 @@ import WifiView from "./routes/wifi";
 import ProfileNetworks from "./routes/profile/networks";
 const root = document.getElementById("root");
 
+console.log(import.meta.env.BASE_URL);
+
 render(
   () => (
     <>
       <Toaster />
-      <Router>
+      <Router base={import.meta.env.BASE_URL}>
         <Route path="/" component={HomeView} />
         <Route path="/search" component={SearchView} />
         <Route path="/create" component={CreateWifiView} />

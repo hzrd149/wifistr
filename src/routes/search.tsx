@@ -26,8 +26,6 @@ function LoadingSpinner() {
 }
 
 function CityResults(props: { query: string }) {
-  const navigate = useNavigate();
-
   const [results, setResults] = createSignal<City[] | null | undefined>(
     undefined,
   );
@@ -78,17 +76,13 @@ function CityResults(props: { query: string }) {
     >
       {(city) => (
         <li class="bg-white shadow-md rounded-lg p-4 mb-2">
-          <a
-            href="#"
+          <A
+            href="/"
             class="text-blue-500 hover:underline float-right"
-            on:click={() =>
-              navigate("/", {
-                state: { center: { lat: city.lat, lng: city.lng } },
-              })
-            }
+            state={{ center: { lat: city.lat, lng: city.lng } }}
           >
             View
-          </a>
+          </A>
           <div class="font-bold text-lg">
             {city.name} ({city.country})
           </div>

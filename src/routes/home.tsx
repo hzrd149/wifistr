@@ -87,13 +87,13 @@ function HomeView(props: RouteSectionProps) {
               <UserIcon />
             </A>
           )}
-          <a href="/search" class="p-2">
+          <A href="/search" class="p-2">
             <SearchIcon />
-          </a>
+          </A>
           <div class="flex-grow"></div>
-          <a class="p-2" href="/scan">
+          <A href="/scan" class="p-2">
             <QrCodeIcon />
-          </a>
+          </A>
           <button
             class="p-2"
             onClick={() =>

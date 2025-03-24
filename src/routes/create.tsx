@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { Location, RouteSectionProps, useNavigate } from "@solidjs/router";
+import { A, Location, RouteSectionProps, useNavigate } from "@solidjs/router";
 import { LatLng } from "leaflet";
 
 import { BackIcon, QrCodeIcon } from "../components/icons";
@@ -157,13 +157,13 @@ function CreateWifiView(props: RouteSectionProps) {
           <BackIcon />
         </button>
         <div class="flex-grow"></div>
-        <a
+        <A
           class="rounded text-white p-2 cursor-pointer"
           href="/scan"
           aria-label="scan qr code"
         >
           <QrCodeIcon />
-        </a>
+        </A>
         <button
           type="submit"
           form="wifi-network"
