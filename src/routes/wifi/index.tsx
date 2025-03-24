@@ -1,4 +1,4 @@
-import { Navigate, RouteSectionProps, useNavigate } from "@solidjs/router";
+import { A, Navigate, RouteSectionProps, useNavigate } from "@solidjs/router";
 import { createEffect, createMemo, createSignal, from } from "solid-js";
 import { nip19, NostrEvent } from "nostr-tools";
 import QRCode from "qrcode-svg";
@@ -29,6 +29,7 @@ import {
 } from "applesauce-factory/blueprints";
 import { publish } from "../../services/nostr";
 import { ReactionsQuery } from "applesauce-core/queries";
+import WifiQrModal from "./components/wifi-qr-modal";
 
 function WifiPage(props: { wifi: NostrEvent }) {
   const account = from(accounts.active$);
@@ -100,24 +101,29 @@ function WifiPage(props: { wifi: NostrEvent }) {
           />
         </div>
 
-        <div class="mt-3 grid grid-cols-2 gap-2">
-          <div class="font-semibold">SSID:</div>
-          <div class="flex items-center gap-2">
-            <code class="font-mono bg-gray-50 px-2 py-1 rounded-sm select-all flex-grow">
-              {ssid}
-            </code>
-            {ssid && <CopyButton text={ssid} />}
+        <div class="mt-3 flex flex-col gap-2">
+          <div class="flex gap-2 items-center justify-between">
+            <div class="font-semibold">SSID:</div>
+            <div class="flex items-center gap-2">
+              <code class="font-mono bg-gray-50 px-2 py-1 rounded-sm select-all min-w-32">
+                {ssid}
+              </code>
+              {ssid && <CopyButton text={ssid} />}
+            </div>
           </div>
 
-          <div class="font-semibold">Password:</div>
-          <div class="flex items-center gap-2">
-            <code class="font-mono bg-gray-50 px-2 py-1 rounded-sm select-all flex-grow">
-              {password}
-            </code>
-            {password && <CopyButton text={password} />}
-          </div>
+          {password && (
+            <div class="flex gap-2 items-center justify-between">
+              <div class="font-semibold">Password:</div>
+              <div class="flex items-center gap-2">
+                <code class="font-mono bg-gray-50 px-2 py-1 rounded-sm select-all min-w-32">
+                  {password}
+                </code>
+                <CopyButton text={password} />
+              </div>
+            </div>
+          )}
         </div>
-
         <p class="mt-4 text-gray-700">{props.wifi.content}</p>
 
         <div class="mt-5 flex items-center gap-4">
@@ -154,9 +160,6 @@ function WifiPage(props: { wifi: NostrEvent }) {
 }
 
 export default function WifiView(props: RouteSectionProps) {
-  const [showQrModal, setShowQrModal] = createSignal(false);
-  const account = from(accounts.active$);
-  const navigate = useNavigate();
   const { nevent } = props.params;
   if (!nevent) return <Navigate href="/" />;
 
@@ -174,11 +177,14 @@ export default function WifiView(props: RouteSectionProps) {
     });
   });
 
+  const account = from(accounts.active$);
+  const navigate = useNavigate();
   const wifi = from(queryStore.event(pointer.id));
+  const [showQrModal, setShowQrModal] = createSignal(false);
 
   return (
     <>
-      <main class="flex-col flex-grow flex overflow-auto p-4 bg-gray-100">
+      <main class="flex-col flex-grow flex overflow-auto p-4">
         {wifi() ? <WifiPage wifi={wifi()!} /> : <div>Loading...</div>}
       </main>
 
@@ -190,9 +196,13 @@ export default function WifiView(props: RouteSectionProps) {
         <div class="flex-grow"></div>
 
         {wifi() && account()?.pubkey === wifi()?.pubkey && (
-          <button class="p-2 cursor-pointer" aria-label="edit">
+          <A
+            href={`/wifi/${nevent}/edit`}
+            class="p-2 cursor-pointer"
+            aria-label="edit"
+          >
             Edit
-          </button>
+          </A>
         )}
         <button
           class="p-2 cursor-pointer"
@@ -205,45 +215,7 @@ export default function WifiView(props: RouteSectionProps) {
 
       {/* QR Code Modal */}
       {showQrModal() && wifi() && (
-        <div
-          class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-          onClick={() => setShowQrModal(false)}
-        >
-          <div
-            class="bg-white p-6 rounded-lg max-w-sm w-full md:max-w-md mx-4 md:mx-0 h-auto md:h-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-bold">Scan to Connect</h2>
-              <button
-                class="text-gray-500 hover:text-gray-800 cursor-pointer"
-                onClick={() => setShowQrModal(false)}
-              >
-                <CloseIcon />
-              </button>
-            </div>
-            <div class="flex justify-center mb-4">
-              <div
-                innerHTML={new QRCode({
-                  content: createWifiQrCode({
-                    ssid: getTagValue(wifi()!, "ssid"),
-                    password: getTagValue(wifi()!, "password"),
-                    hidden: getTagValue(wifi()!, "h") === "true",
-                  }),
-                  width: 256,
-                  height: 256,
-                  color: "#000000",
-                  background: "#ffffff",
-                  ecl: "M",
-                }).svg()}
-              />
-            </div>
-            <p class="text-center text-sm text-gray-600">
-              Scan this QR code with your device's camera to connect to "
-              {getTagValue(wifi()!, "ssid")}"
-            </p>
-          </div>
-        </div>
+        <WifiQrModal wifi={wifi()!} onClose={() => setShowQrModal(false)} />
       )}
     </>
   );

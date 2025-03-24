@@ -1,18 +1,20 @@
-import { A, Navigate, useNavigate } from "@solidjs/router";
-import { createEffect, from } from "solid-js";
+import { A, Navigate, RouteSectionProps, useNavigate } from "@solidjs/router";
+import { createEffect, createMemo, from } from "solid-js";
 import { kinds } from "nostr-tools";
 import { ProfileQuery } from "applesauce-core/queries";
 import { of, switchMap } from "rxjs";
 
-import { accounts } from "../services/accounts";
-import { BackIcon, SettingsIcon } from "../components/icons";
-import UserAvatar from "../components/user-avatar";
-import { queryStore } from "../services/stores";
-import { replaceableLoader } from "../services/loaders";
+import { accounts } from "../../services/accounts";
+import { BackIcon, SettingsIcon } from "../../components/icons";
+import UserAvatar from "../../components/user-avatar";
+import { queryStore } from "../../services/stores";
+import { replaceableLoader } from "../../services/loaders";
 
-function ProfileView() {
+function ProfileView(props: RouteSectionProps) {
   const navigate = useNavigate();
   const account = from(accounts.active$);
+  const pubkey = createMemo(() => props.params.pubkey || account()?.pubkey);
+  const self = createMemo(() => pubkey() === account()?.pubkey);
 
   // Handle logout functionality
   const handleLogout = () => {
@@ -43,7 +45,7 @@ function ProfileView() {
   if (!account()) return <Navigate href="/welcome" />;
 
   return (
-    <div class="h-dvh bg-gray-100 flex flex-col">
+    <>
       <main class="flex-grow flex flex-col items-center justify-center p-4">
         <div class="text-center mb-8">
           <UserAvatar
@@ -57,12 +59,21 @@ function ProfileView() {
           )}
         </div>
 
-        <button
-          onClick={handleLogout}
-          class="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 cursor-pointer rounded-lg transition-colors"
+        <A
+          href={`/profile/${pubkey()}/networks`}
+          class="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
         >
-          Logout
-        </button>
+          Networks
+        </A>
+
+        {self() && (
+          <button
+            onClick={handleLogout}
+            class="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 cursor-pointer rounded transition-colors"
+          >
+            Logout
+          </button>
+        )}
       </main>
 
       <footer class="bg-blue-500 text-white p-2 flex justify-between items-center">
@@ -78,7 +89,7 @@ function ProfileView() {
           <SettingsIcon />
         </A>
       </footer>
-    </div>
+    </>
   );
 }
 
