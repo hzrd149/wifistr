@@ -1,11 +1,9 @@
 import { A, Navigate, RouteSectionProps, useNavigate } from "@solidjs/router";
 import { createEffect, createMemo, createSignal, from } from "solid-js";
 import { nip19, NostrEvent } from "nostr-tools";
-import QRCode from "qrcode-svg";
 
 import {
   BackIcon,
-  CloseIcon,
   DislikeIcon,
   LikeIcon,
   QrCodeIcon,
