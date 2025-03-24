@@ -47,6 +47,9 @@ importers:
       ngeohash:
         specifier: ^0.6.3
         version: 0.6.3
+      nostr-idb:
+        specifier: ^2.2.0
+        version: 2.2.0(typescript@5.7.3)
       nostr-tools:
         specifier: ^2.11.0
         version: 2.11.0(typescript@5.7.3)
@@ -90,6 +93,9 @@ importers:
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
+      qrcode-svg:
+        specifier: ^1.1.0
+        version: 1.1.0
       solid-devtools:
         specifier: ^0.33.0
         version: 0.33.0(solid-js@1.9.5)(vite@6.2.2(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0))
@@ -1608,6 +1614,9 @@ packages:
   idb@7.1.1:
     resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
 
+  idb@8.0.2:
+    resolution: {integrity: sha512-CX70rYhx7GDDQzwwQMDwF6kDRQi5vVs6khHUumDrMecBylKkwvZ8HWvKV08AGb7VbpoGCWUQ4aHzNDgoUiOIUg==}
+
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
@@ -1983,6 +1992,9 @@ packages:
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
 
+  nostr-idb@2.2.0:
+    resolution: {integrity: sha512-hKvu+U7he+mkCGqgwPGvTDhb4D8Qt8C4KJ8fDtJwXwnLA6PBp2+bsAH4ewR62GvtD42PSeFQDXBIYttMb9X7nQ==}
+
   nostr-tools@2.11.0:
     resolution: {integrity: sha512-kRtXI9j5f45NvIcdJacQ0UEAfEb7p/jhZqhAGLQWtUd5idZJPYdSyR8hdw+MmpGH4TCMH5plZrXzFltIIZrkEA==}
     peerDependencies:
@@ -2064,6 +2076,10 @@ packages:
 
   qr-scanner@1.4.2:
     resolution: {integrity: sha512-kV1yQUe2FENvn59tMZW6mOVfpq9mGxGf8l6+EGaXUOd4RBOLg7tRC83OrirM5AtDvZRpdjdlXURsHreAOSPOUw==}
+
+  qrcode-svg@1.1.0:
+    resolution: {integrity: sha512-XyQCIXux1zEIA3NPb0AeR8UMYvXZzWEhgdBgBjH9gO7M48H9uoHzviNz8pXw3UzrAcxRRRn9gxHewAVK7bn9qw==}
+    hasBin: true
 
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
@@ -4266,6 +4282,8 @@ snapshots:
 
   idb@7.1.1: {}
 
+  idb@8.0.2: {}
+
   ieee754@1.2.1: {}
 
   inflight@1.0.6:
@@ -4699,6 +4717,15 @@ snapshots:
 
   node-releases@2.0.19: {}
 
+  nostr-idb@2.2.0(typescript@5.7.3):
+    dependencies:
+      debug: 4.4.0
+      idb: 8.0.2
+      nostr-tools: 2.11.0(typescript@5.7.3)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   nostr-tools@2.11.0(typescript@5.7.3):
     dependencies:
       '@noble/ciphers': 0.5.3
@@ -4772,6 +4799,8 @@ snapshots:
   qr-scanner@1.4.2:
     dependencies:
       '@types/offscreencanvas': 2019.7.3
+
+  qrcode-svg@1.1.0: {}
 
   randombytes@2.1.0:
     dependencies:

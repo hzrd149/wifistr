@@ -33,7 +33,7 @@ render(
         <Route path="/signin" component={SigninView} />
         <Route path="/settings" component={SettingsView} />
         <Route path="/profile" component={ProfileView} />
-        <Route path="/wifi/:naddr" component={WifiView} />
+        <Route path="/wifi/:nevent" component={WifiView} />
         <Route path="*" component={NotFoundView} />
       </Router>
     </>

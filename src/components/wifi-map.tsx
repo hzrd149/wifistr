@@ -123,10 +123,10 @@ function WifiMap(props: {
         });
         marker.on("click", () => {
           navigate(
-            `/wifi/${nip19.naddrEncode({
+            `/wifi/${nip19.neventEncode({
+              id: network.id,
               kind: network.kind,
-              pubkey: network.pubkey,
-              identifier: getReplaceableIdentifier(network),
+              author: network.pubkey,
             })}`,
           );
         });

@@ -4,7 +4,11 @@ import { toastOperation } from "../helpers/toast";
 import { UserContactsQuery } from "applesauce-core/queries";
 import { queryStore } from "../services/stores";
 import { actions } from "../services/actions";
-import { FollowUser, UnfollowUser } from "applesauce-actions/actions";
+import {
+  FollowUser,
+  NewContacts,
+  UnfollowUser,
+} from "applesauce-actions/actions";
 import { publish } from "../services/nostr";
 
 export default function UserFollowButton(props: {
@@ -23,7 +27,9 @@ export default function UserFollowButton(props: {
 
   const toggle = toastOperation(
     async () => {
-      if (isFollowing()) {
+      if (!contacts())
+        await actions.exec(NewContacts, [props.pubkey]).forEach(publish);
+      else if (isFollowing()) {
         await actions.exec(UnfollowUser, props.pubkey).forEach(publish);
       } else {
         await actions.exec(FollowUser, props.pubkey).forEach(publish);
