@@ -18,9 +18,9 @@ let loaded = false;
 export async function loadCitySearchIndex(): Promise<void> {
   if (loaded) return;
 
-  const txt = await fetch(import.meta.env.BASE_URL + "/cities.txt").then(
-    (res) => res.text(),
-  );
+  const txt = await fetch(
+    import.meta.env.BASE_URL.replace(/\/$/, "") + "/cities.txt",
+  ).then((res) => res.text());
 
   const lines = txt.split("\n");
   for (const line of lines) {

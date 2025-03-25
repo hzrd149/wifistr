@@ -4,6 +4,7 @@ import L, { LatLng } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
 import marker from "leaflet/dist/images/marker-icon.png?url";
 import shadow from "leaflet/dist/images/marker-shadow.png?url";
+import { addOpenStreetMapLayer } from "../../../helpers/leaflet";
 
 export const MarkerIcon = L.Icon.extend({
   options: {
@@ -34,11 +35,7 @@ function LocationPicker(props: {
         props.zoom ?? 17,
       );
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+      addOpenStreetMapLayer(map);
 
       let marker = L.marker(map.getCenter(), {
         draggable: false,

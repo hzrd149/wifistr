@@ -2,11 +2,11 @@
 
 ## Wifi hot-spot event
 
-A wifi hot-spot event is a kind `3784` event with a human readable name and a description in the `content` field and metadata in the `tags`
+A wifi hot-spot event is a kind `38787` event with a human readable name and a description in the `content` field and metadata in the `tags`
 
 ```jsonc
 {
-  "kind": 3784,
+  "kind": 38787,
   "content": "This is a great little coffee shop with free wifi.",
   "tags": [
     // optional name for the wifi hot-spot ( optional )
@@ -30,19 +30,21 @@ A wifi hot-spot event is a kind `3784` event with a human readable name and a de
 }
 ```
 
-## Wifi update event
+## Wifi correction event
 
-A wifi update event is a kind `3785` which is used to update the details of a wifi hot-spot.
+A wifi correction event is a kind `8787` which is used to correct the details of a wifi hot-spot.
+
+It can have the same tags as a wifi hot-spot event, but each tag is considered a correction to the original wifi hot-spot event.
 
 ```jsonc
 {
-  "kind": 3785,
-  "content": "The wifi is now faster and more reliable.",
+  "kind": 8787,
+  "content": "The wifi password has changed to morecoffeeplease",
   "tags": [
     // Update the security type of the wifi hot-spot ( optional )
     ["security", "WPA2"],
     // Update the password of the wifi hot-spot ( optional )
-    ["password", "coffee-password12345"],
+    ["password", "morecoffeeplease"],
   ],
 }
 ```

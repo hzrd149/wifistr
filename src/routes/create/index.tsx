@@ -2,13 +2,13 @@ import { createSignal } from "solid-js";
 import { A, Location, RouteSectionProps, useNavigate } from "@solidjs/router";
 import { LatLng } from "leaflet";
 
-import { BackIcon, QrCodeIcon } from "../components/icons";
-import { WifiCode } from "../helpers/qr-code";
-import LocationPicker from "../components/location-picker";
-import { factory } from "../services/actions";
-import { WifiBlueprint } from "../blueprints/wifi";
-import { publish } from "../services/nostr";
-import { toastOperation } from "../helpers/toast";
+import { BackIcon, QrCodeIcon } from "../../components/icons";
+import { WifiCode } from "../../helpers/qr-code";
+import LocationPicker from "./components/location-picker";
+import { factory } from "../../services/actions";
+import { WifiBlueprint } from "../../blueprints/wifi";
+import { publish } from "../../services/nostr";
+import { toastOperation } from "../../helpers/toast";
 
 function CreateWifiView(props: RouteSectionProps) {
   const location: Location<{

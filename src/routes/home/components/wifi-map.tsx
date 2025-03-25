@@ -1,5 +1,4 @@
-import { createEffect, onCleanup } from "solid-js";
-import { safeParse } from "applesauce-core/helpers";
+import { createEffect, from, onCleanup } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import ngeohash from "ngeohash";
 
@@ -7,13 +6,13 @@ import L, { LatLng, LatLngBounds } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
 
 import { nip19, NostrEvent } from "nostr-tools";
-import { WifiMarkerIcon } from "./markers";
+import { WifiMarkerIcon } from "../../../components/markers";
+import { homeMapCenter } from "../../../services/settings";
+import { addOpenStreetMapLayer } from "../../../helpers/leaflet";
 
 function WifiMap(props: {
   networks?: NostrEvent[];
   class?: string;
-  center?: LatLng;
-  cacheView?: string;
   onCenterChange?: (center: LatLng) => void;
   onZoomChange?: (zoom: number) => void;
   onBBoxChange?: (bbox: LatLngBounds) => void;
@@ -23,17 +22,24 @@ function WifiMap(props: {
   let map: L.Map | undefined;
   const markersLayer = L.layerGroup();
 
+  const cached = from(homeMapCenter);
+
+  // create the map
   createEffect(() => {
     if (!mapContainer) return;
 
     if (!map) {
-      map = L.map(mapContainer).setView([51.505, -0.09], 13);
+      map = L.map(mapContainer);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+      // set initial view from cache
+      const location = cached();
+      if (location && map) {
+        map.setView([location.center.lat, location.center.lng], location.zoom);
+      } else {
+        map.setView([51.505, -0.09], 13);
+      }
+
+      addOpenStreetMapLayer(map);
 
       // locate control
       const locate = new LocateControl({
@@ -60,34 +66,19 @@ function WifiMap(props: {
         if (props.onBBoxChange) props.onBBoxChange?.(map!.getBounds());
         if (props.onZoomChange) props.onZoomChange?.(map!.getZoom());
       });
-    }
-  });
-
-  // save map center when move
-  createEffect(() => {
-    props.center;
-
-    if (props.cacheView && map) {
-      // load center from cache
-      if (!props.center) {
-        const cached = safeParse<{ center: LatLng; zoom: number }>(
-          localStorage.getItem(props.cacheView + "-map-position") ?? "",
-        );
-        if (cached) {
-          map.setView(cached.center, cached.zoom);
-        }
-      }
 
       // save updates to local storage
       const listener = () => {
-        localStorage.setItem(
-          props.cacheView + "-map-position",
-          JSON.stringify({ center: map!.getCenter(), zoom: map!.getZoom() }),
-        );
+        homeMapCenter.next({
+          center: map!.getCenter(),
+          zoom: map!.getZoom(),
+        });
       };
 
       map.addEventListener("moveend", listener);
       map.addEventListener("zoomend", listener);
+
+      // TODO: it might not be necessary to remove the listener
       return () => {
         map!.removeEventListener("moveend", listener);
         map!.removeEventListener("zoomend", listener);
@@ -95,17 +86,10 @@ function WifiMap(props: {
     }
   });
 
-  // center the map when props change
-  createEffect(() => {
-    if (props.center && map) {
-      map.setView([props.center.lat, props.center.lng]);
-    }
-  });
-
+  // update the wifi networks on the map
   createEffect(() => {
     props.networks;
 
-    // update the wifi networks on the map
     if (map && props.networks) {
       markersLayer.clearLayers();
 

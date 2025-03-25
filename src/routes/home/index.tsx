@@ -1,7 +1,7 @@
 import { A, Location, RouteSectionProps, useNavigate } from "@solidjs/router";
-import WifiMap from "../components/wifi-map";
+import WifiMap from "./components/wifi-map";
 import { LatLngBounds, type LatLng } from "leaflet";
-import { createEffect, createSignal, from } from "solid-js";
+import { createEffect, createMemo, createSignal, from } from "solid-js";
 import ngeohash from "ngeohash";
 
 import {
@@ -9,22 +9,31 @@ import {
   QrCodeIcon,
   SearchIcon,
   UserIcon,
-} from "../components/icons";
-import { accounts } from "../services/accounts";
-import UserAvatar from "../components/user-avatar";
+} from "../../components/icons";
+import { accounts } from "../../services/accounts";
+import UserAvatar from "../../components/user-avatar";
 import {
   getTimelineLoader,
   LOADERS_PRECISION,
-} from "../services/location-loaders";
-import { activeMailboxes } from "../services/lifestyle";
-import { queryStore } from "../services/stores";
-import { WIFI_NETWORK_KIND } from "../const";
-import { defaultRelays } from "../services/settings";
+} from "../../services/location-loaders";
+import { activeMailboxes } from "../../services/lifestyle";
+import { queryStore } from "../../services/stores";
+import { WIFI_NETWORK_KIND } from "../../const";
+import { defaultRelays, homeMapCenter } from "../../services/settings";
 
 const LOADER_MAX_ZOOM = 13;
 
 function HomeView(props: RouteSectionProps) {
   const location: Location<{ center?: LatLng }> = props.location;
+
+  // set initial map center from location state
+  if (location.state?.center) {
+    homeMapCenter.next({
+      center: location.state.center,
+      zoom: 13,
+    });
+  }
+
   const account = from(accounts.active$);
   const navigate = useNavigate();
 
@@ -32,7 +41,11 @@ function HomeView(props: RouteSectionProps) {
   const [center, setCenter] = createSignal<LatLng | undefined>(undefined);
   const [geohashes, setGeohashes] = createSignal<string[]>([]);
 
+  const shouldLoad = createMemo(() => zoom() >= LOADER_MAX_ZOOM);
+
   const onBBoxChange = (bbox: LatLngBounds) => {
+    if (!shouldLoad()) return;
+
     const lat = [bbox.getSouth(), bbox.getNorth()];
     const lng = [bbox.getWest(), bbox.getEast()];
 
@@ -49,9 +62,10 @@ function HomeView(props: RouteSectionProps) {
   const mailboxes = from(activeMailboxes);
 
   createEffect(() => {
+    geohashes();
     const relays = mailboxes()?.outboxes || defaultRelays.getValue();
 
-    if (zoom() < LOADER_MAX_ZOOM) return;
+    if (!shouldLoad()) return;
 
     // trigger loaders when geohashes change
     console.log(`Loading events for`, geohashes());
@@ -70,8 +84,6 @@ function HomeView(props: RouteSectionProps) {
           <WifiMap
             class="grow"
             networks={networks()}
-            center={location.state?.center}
-            cacheView="home"
             onBBoxChange={onBBoxChange}
             onZoomChange={setZoom}
             onCenterChange={setCenter}

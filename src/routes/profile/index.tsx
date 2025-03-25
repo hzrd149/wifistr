@@ -36,10 +36,11 @@ function ProfileView(props: RouteSectionProps) {
 
   // Load the kind 0 event for the active account
   createEffect(() => {
-    replaceableLoader.next({
-      pubkey: account()!.pubkey,
-      kind: kinds.Metadata,
-    });
+    if (pubkey())
+      replaceableLoader.next({
+        pubkey: pubkey()!,
+        kind: kinds.Metadata,
+      });
   });
 
   if (!account()) return <Navigate href="/welcome" />;

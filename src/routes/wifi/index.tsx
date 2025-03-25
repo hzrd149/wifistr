@@ -180,6 +180,9 @@ export default function WifiView(props: RouteSectionProps) {
   const wifi = from(queryStore.event(pointer.id));
   const [showQrModal, setShowQrModal] = createSignal(false);
 
+  // debug wifi event
+  createEffect(() => console.log(wifi()));
+
   return (
     <>
       <main class="flex-col flex-grow flex overflow-auto p-4">
