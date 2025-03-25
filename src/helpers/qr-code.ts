@@ -1,6 +1,6 @@
 export type WifiCode = {
   ssid?: string;
-  securityType?: string;
+  security?: string;
   password?: string;
   hidden?: boolean;
 };
@@ -54,7 +54,7 @@ export function createWifiQrCode(wifi: WifiCode) {
 
   parts.push(`S:${wifi.ssid}`);
 
-  if (wifi.securityType) parts.push(`T:${wifi.securityType}`);
+  if (wifi.security) parts.push(`T:${wifi.security}`);
   else if (wifi.password) parts.push(`T:WPA`);
   else parts.push(`T:nopass`);
 

@@ -15,7 +15,8 @@ import { cacheRequest } from "../services/cache";
 import { WIFI_NETWORK_KIND } from "../const";
 import { eventStore } from "../services/stores";
 import { wifiSearch, WifiSearchItem } from "../services/wifi-search";
-import { neventEncode } from "nostr-tools/nip19";
+import { naddrEncode } from "nostr-tools/nip19";
+import { getAddressPointerForEvent } from "applesauce-core/helpers";
 
 function LoadingSpinner() {
   return (
@@ -146,7 +147,7 @@ function WifiResults(props: { query: string }) {
       {(network) => (
         <li class="bg-white shadow-md rounded-lg p-4 mb-2">
           <A
-            href={`/wifi/${neventEncode({ id: network.id })}`}
+            href={`/wifi/${naddrEncode(getAddressPointerForEvent(network.event))}`}
             class="text-blue-500 hover:underline float-right"
           >
             View

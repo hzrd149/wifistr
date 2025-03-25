@@ -4,11 +4,12 @@ import { LatLng } from "leaflet";
 
 import { BackIcon, QrCodeIcon } from "../../components/icons";
 import { WifiCode } from "../../helpers/qr-code";
-import LocationPicker from "./components/location-picker";
+import LocationPicker from "../../components/location-picker";
 import { factory } from "../../services/actions";
 import { WifiBlueprint } from "../../blueprints/wifi";
 import { publish } from "../../services/nostr";
 import { toastOperation } from "../../helpers/toast";
+import { WIFI_SECURITY_TYPES } from "../../const";
 
 function CreateWifiView(props: RouteSectionProps) {
   const location: Location<{
@@ -19,8 +20,8 @@ function CreateWifiView(props: RouteSectionProps) {
 
   const [wifiLocation, setWifiLatlng] = createSignal<LatLng | undefined>();
   const [ssid, setSsid] = createSignal(location.state?.wifi?.ssid ?? "");
-  const [securityType, setSecurityType] = createSignal(
-    location.state?.wifi?.securityType ?? "WPA2",
+  const [security, setSecurity] = createSignal(
+    location.state?.wifi?.security ?? WIFI_SECURITY_TYPES.WPA2,
   );
   const [password, setPassword] = createSignal(
     location.state?.wifi?.password ?? "",
@@ -36,17 +37,20 @@ function CreateWifiView(props: RouteSectionProps) {
     async (event: SubmitEvent) => {
       event.preventDefault();
 
-      const wifiDetails = {
-        ssid: ssid(),
-        securityType: securityType(),
-        password: password(),
-        captive: captive(),
-        hidden: hidden(),
-      };
       const location = wifiLocation();
       if (!location) throw new Error("Location is missing");
 
-      const draft = await factory.create(WifiBlueprint, wifiDetails, location);
+      const draft = await factory.create(
+        WifiBlueprint,
+        {
+          ssid: ssid(),
+          security: security(),
+          password: password(),
+          captive: captive(),
+          hidden: hidden(),
+        },
+        location,
+      );
       const signed = await factory.sign(draft);
 
       await publish(signed);
@@ -97,7 +101,7 @@ function CreateWifiView(props: RouteSectionProps) {
               value={password()}
               onInput={(e) => setPassword(e.currentTarget.value)}
               disabled={save.loading()}
-              required={securityType() !== "nopass"}
+              required={security() !== "nopass"}
             />
           </div>
           <div class="flex flex-col">
@@ -107,16 +111,14 @@ function CreateWifiView(props: RouteSectionProps) {
             <select
               id="security"
               class="border p-2 rounded"
-              value={securityType()}
-              onChange={(e) => setSecurityType(e.currentTarget.value)}
+              value={security()}
+              onChange={(e) => setSecurity(e.currentTarget.value)}
               disabled={save.loading()}
               required
             >
-              <option value="WPA">WPA</option>
-              <option value="WEP">WEP</option>
-              <option value="WPA2">WPA2</option>
-              <option value="WPA3">WPA3</option>
-              <option value="nopass">None</option>
+              {Object.entries(WIFI_SECURITY_TYPES).map(([key, value]) => (
+                <option value={key}>{value}</option>
+              ))}
             </select>
           </div>
           <div class="flex items-center">

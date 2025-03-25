@@ -4,7 +4,7 @@ import L, { LatLng } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
 import marker from "leaflet/dist/images/marker-icon.png?url";
 import shadow from "leaflet/dist/images/marker-shadow.png?url";
-import { addOpenStreetMapLayer } from "../../../helpers/leaflet";
+import { addOpenStreetMapLayer } from "../helpers/leaflet";
 
 export const MarkerIcon = L.Icon.extend({
   options: {

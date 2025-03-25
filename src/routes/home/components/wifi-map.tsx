@@ -5,10 +5,12 @@ import ngeohash from "ngeohash";
 import L, { LatLng, LatLngBounds } from "leaflet";
 import { LocateControl } from "leaflet.locatecontrol";
 
-import { nip19, NostrEvent } from "nostr-tools";
+import { NostrEvent } from "nostr-tools";
 import { WifiMarkerIcon } from "../../../components/markers";
 import { homeMapCenter } from "../../../services/settings";
 import { addOpenStreetMapLayer } from "../../../helpers/leaflet";
+import { naddrEncode } from "nostr-tools/nip19";
+import { getAddressPointerForEvent } from "applesauce-core/helpers";
 
 function WifiMap(props: {
   networks?: NostrEvent[];
@@ -106,13 +108,7 @@ function WifiMap(props: {
           icon: new WifiMarkerIcon(),
         });
         marker.on("click", () => {
-          navigate(
-            `/wifi/${nip19.neventEncode({
-              id: network.id,
-              kind: network.kind,
-              author: network.pubkey,
-            })}`,
-          );
+          navigate(`/wifi/${naddrEncode(getAddressPointerForEvent(network))}`);
         });
         marker.addTo(markersLayer);
       }

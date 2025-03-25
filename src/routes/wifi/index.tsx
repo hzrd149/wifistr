@@ -9,7 +9,7 @@ import {
   QrCodeIcon,
 } from "../../components/icons";
 import { queryStore } from "../../services/stores";
-import { singleEventLoader } from "../../services/loaders";
+import { replaceableLoader } from "../../services/loaders";
 import { getTagValue, mergeRelaySets } from "applesauce-core/helpers";
 import { accounts } from "../../services/accounts";
 import { appRelays } from "../../services/lifestyle";
@@ -84,14 +84,13 @@ function WifiPage(props: { wifi: NostrEvent }) {
   return (
     <>
       <div class="mb-6">
-        <h1 class="text-2xl font-bold text-blue-600">{name}</h1>
+        <h1 class="text-2xl font-bold text-blue-600">{name || ssid}</h1>
 
         <div class="flex gap-2 items-center">
           <UserAvatar pubkey={props.wifi.pubkey} />
-          <UserName
-            class="text-lg font-bold truncate"
-            pubkey={props.wifi.pubkey}
-          />
+          <A href={`/profile/${props.wifi.pubkey}`}>
+            <UserName class="text-lg truncate" pubkey={props.wifi.pubkey} />
+          </A>
 
           <UserFollowButton
             pubkey={props.wifi.pubkey}
@@ -158,18 +157,18 @@ function WifiPage(props: { wifi: NostrEvent }) {
 }
 
 export default function WifiView(props: RouteSectionProps) {
-  const { nevent } = props.params;
-  if (!nevent) return <Navigate href="/" />;
+  const { naddr } = props.params;
+  if (!naddr) return <Navigate href="/" />;
 
-  const decoded = nip19.decode(nevent);
-  if (decoded.type !== "nevent") return <Navigate href="/" />;
+  const decoded = nip19.decode(naddr);
+  if (decoded.type !== "naddr") return <Navigate href="/" />;
 
   const pointer = decoded.data;
   const relays = from(appRelays);
 
   // load the wifi event
   createEffect(() => {
-    singleEventLoader.next({
+    replaceableLoader.next({
       ...pointer,
       relays: mergeRelaySets(pointer.relays, relays()),
     });
@@ -177,7 +176,9 @@ export default function WifiView(props: RouteSectionProps) {
 
   const account = from(accounts.active$);
   const navigate = useNavigate();
-  const wifi = from(queryStore.event(pointer.id));
+  const wifi = from(
+    queryStore.replaceable(pointer.kind, pointer.pubkey, pointer.identifier),
+  );
   const [showQrModal, setShowQrModal] = createSignal(false);
 
   // debug wifi event
@@ -198,7 +199,7 @@ export default function WifiView(props: RouteSectionProps) {
 
         {wifi() && account()?.pubkey === wifi()?.pubkey && (
           <A
-            href={`/wifi/${nevent}/edit`}
+            href={`/wifi/${naddr}/edit`}
             class="p-2 cursor-pointer"
             aria-label="edit"
           >

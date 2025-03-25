@@ -18,6 +18,8 @@ import ProfileView from "./routes/profile";
 import NotFoundView from "./routes/404";
 import WifiView from "./routes/wifi";
 import ProfileNetworks from "./routes/profile/networks";
+import WifiEditView from "./routes/wifi/edit";
+
 const root = document.getElementById("root");
 
 render(
@@ -35,7 +37,8 @@ render(
         <Route path="/profile" component={ProfileView} />
         <Route path="/profile/:pubkey" component={ProfileView} />
         <Route path="/profile/:pubkey/networks" component={ProfileNetworks} />
-        <Route path="/wifi/:nevent" component={WifiView} />
+        <Route path="/wifi/:naddr" component={WifiView} />
+        <Route path="/wifi/:naddr/edit" component={WifiEditView} />
         <Route path="*" component={NotFoundView} />
       </Router>
     </>

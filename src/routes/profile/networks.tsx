@@ -1,18 +1,21 @@
+import { interval, startWith } from "rxjs";
 import { A, RouteSectionProps, useNavigate } from "@solidjs/router";
 import { createEffect, createMemo, For, from, Match, Switch } from "solid-js";
+import {
+  getAddressPointerForEvent,
+  getTagValue,
+} from "applesauce-core/helpers";
+import { TimelineLoader } from "applesauce-loaders";
+import { naddrEncode } from "nostr-tools/nip19";
 import { NostrEvent } from "nostr-tools";
 
 import { eventStore, queryStore } from "../../services/stores";
 import { BackIcon } from "../../components/icons";
 import UserAvatar from "../../components/user-avatar";
 import UserName from "../../components/user-name";
-import { getTagValue } from "applesauce-core/helpers";
 import { WIFI_NETWORK_KIND } from "../../const";
-import { TimelineLoader } from "applesauce-loaders";
 import { rxNostr } from "../../services/nostr";
 import { appRelays } from "../../services/lifestyle";
-import { interval, startWith } from "rxjs";
-import { neventEncode } from "nostr-tools/nip19";
 
 export default function ProfileNetworks(props: RouteSectionProps) {
   const { pubkey } = props.params;
@@ -75,7 +78,9 @@ export default function ProfileNetworks(props: RouteSectionProps) {
               <For each={networks()}>
                 {(wifi: NostrEvent) => (
                   <div class="bg-white rounded-lg py-2 px-4 shadow-sm">
-                    <A href={`/wifi/${neventEncode({ id: wifi.id })}`}>
+                    <A
+                      href={`/wifi/${naddrEncode(getAddressPointerForEvent(wifi))}`}
+                    >
                       <h3 class="text-lg font-semibold text-blue-500">
                         {getTagValue(wifi, "name") || getTagValue(wifi, "ssid")}
                       </h3>
