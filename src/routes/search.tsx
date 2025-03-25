@@ -8,6 +8,8 @@ import {
 } from "solid-js";
 import { A, useNavigate } from "@solidjs/router";
 import { debounce } from "@solid-primitives/scheduled";
+import { naddrEncode } from "nostr-tools/nip19";
+import { getAddressPointerForEvent } from "applesauce-core/helpers";
 
 import { BackIcon } from "../components/icons";
 import { City, citySearch, loadCitySearchIndex } from "../services/city-search";
@@ -15,8 +17,6 @@ import { cacheRequest } from "../services/cache";
 import { WIFI_NETWORK_KIND } from "../const";
 import { eventStore } from "../services/stores";
 import { wifiSearch, WifiSearchItem } from "../services/wifi-search";
-import { naddrEncode } from "nostr-tools/nip19";
-import { getAddressPointerForEvent } from "applesauce-core/helpers";
 
 function LoadingSpinner() {
   return (

@@ -27,7 +27,6 @@ export default function UserAvatar(props: {
   return (
     <img
       src={profile()?.picture || `https://robohash.org/${props.pubkey}`}
-      alt={profile()?.name || "anon"}
       class={`rounded-full object-cover ${props.class || ""}`}
       width={props.size || 40}
       height={props.size || 40}

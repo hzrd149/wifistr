@@ -5,6 +5,7 @@ import { createEffect, createMemo, createSignal, from } from "solid-js";
 import ngeohash from "ngeohash";
 
 import {
+  ListIcon,
   PlusIcon,
   QrCodeIcon,
   SearchIcon,
@@ -101,6 +102,9 @@ function HomeView(props: RouteSectionProps) {
           )}
           <A href="/search" class="p-2">
             <SearchIcon />
+          </A>
+          <A href="/list" class="p-2">
+            <ListIcon />
           </A>
           <div class="flex-grow"></div>
           <A href="/scan" class="p-2">
