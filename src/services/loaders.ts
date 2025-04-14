@@ -11,6 +11,7 @@ import { eventStore } from "./stores";
 import { lookupRelays } from "./settings";
 import { cacheRequest } from "./cache";
 import { pool } from "./pool";
+import { appRelays } from "./lifestyle";
 
 export const nostrRequest: NostrRequest = (relays, filters) =>
   pool.req(relays, filters);
@@ -36,6 +37,15 @@ singleEventLoader.subscribe((event) => eventStore.add(event));
 reactionsLoader.subscribe((event) => eventStore.add(event));
 commentsLoader.subscribe((event) => eventStore.add(event));
 
+// Always fetch from the app relays
+appRelays.subscribe((relays) => {
+  replaceableLoader.extraRelays = relays;
+  singleEventLoader.extraRelays = relays;
+  reactionsLoader.extraRelays = relays;
+  commentsLoader.extraRelays = relays;
+});
+
+// Set the fallback lookup relays
 lookupRelays.subscribe((relays) => {
   replaceableLoader.lookupRelays = relays;
 });
