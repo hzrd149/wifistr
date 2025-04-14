@@ -14,8 +14,8 @@ import { BackIcon } from "../../components/icons";
 import UserAvatar from "../../components/user-avatar";
 import UserName from "../../components/user-name";
 import { WIFI_NETWORK_KIND } from "../../const";
-import { rxNostr } from "../../services/nostr";
 import { appRelays } from "../../services/lifestyle";
+import { nostrRequest } from "../../services/loaders";
 
 export default function ProfileNetworks(props: RouteSectionProps) {
   const { pubkey } = props.params;
@@ -26,7 +26,7 @@ export default function ProfileNetworks(props: RouteSectionProps) {
     if (!pubkey || !relays()) return null;
 
     return new TimelineLoader(
-      rxNostr,
+      nostrRequest,
       TimelineLoader.simpleFilterMap(relays()!, [
         { kinds: [WIFI_NETWORK_KIND], authors: [pubkey] },
       ]),
@@ -37,9 +37,7 @@ export default function ProfileNetworks(props: RouteSectionProps) {
   createEffect(() => {
     if (!loader()) return;
 
-    return loader()!.subscribe((packet) =>
-      eventStore.add(packet.event, packet.from),
-    );
+    return loader()!.subscribe((e) => eventStore.add(e));
   });
 
   // auto load timeline

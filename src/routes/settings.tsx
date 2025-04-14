@@ -4,8 +4,8 @@ import { TimelineQuery } from "applesauce-core/queries";
 import { getTagValue } from "applesauce-core/helpers";
 import { map } from "rxjs";
 import { kinds } from "nostr-tools";
-import { createRxOneshotReq } from "rx-nostr";
 import { modifyPublicTags } from "applesauce-factory/operations/event";
+import { onlyEvents } from "applesauce-relay";
 import {
   addOutboxRelay,
   removeOutboxRelay,
@@ -13,7 +13,7 @@ import {
 
 import { defaultRelays, lookupRelays } from "../services/settings";
 import { BackIcon, RemoveIcon } from "../components/icons";
-import { publish, rxNostr } from "../services/nostr";
+import { pool, publish } from "../services/pool";
 import { eventStore, queryStore } from "../services/stores";
 import { activeMailboxes } from "../services/lifestyle";
 import { toastOperation } from "../helpers/toast";
@@ -54,17 +54,12 @@ function AddRelayForm(props: {
   };
 
   // load online relays
-  onMount(() => {
-    const req = createRxOneshotReq({
-      filters: [{ kinds: [30166], limit: 400 }],
-    });
-
-    return rxNostr
-      .use(req, { on: { relays: ["wss://relay.nostr.watch"] } })
-      .subscribe((packet) => {
-        eventStore.add(packet.event, packet.from);
-      });
-  });
+  onMount(() =>
+    pool
+      .req(["wss://relay.nostr.watch"], { kinds: [30166], limit: 400 })
+      .pipe(onlyEvents())
+      .subscribe((event) => eventStore.add(event)),
+  );
 
   // Subscribe to an array of relays urls from the 30166 events
   const relays = from(

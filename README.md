@@ -1,10 +1,31 @@
-## Usage
+# Wifistr
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+Open wifi map powered by nostr
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+## TODO
+
+### General features
+
+- [ ] Account export screen for transferring account to new phone
+- [ ] Add location picker to wifi edit view to allow user to move network
+- [ ] Show number of up/down votes on wifi networks
+- [ ] Show last reaction time on wifi details / map
+- [ ] Add support for local relay `ws://localhost:4869`
+- [ ] Add view for managing trusted accounts (nostr contacts)
+- [ ] Filter wifi networks on map based on trusted
+- [ ] Filter wifi networks on map by date (updated / last reaction)
+- [x] Add notification view for comments and reactions
+- [ ] Update UI components to use DaisyUI instead of Tailwind classes
+
+### Native app
+
+- [ ] Setup CapacitorJS for native supports
+- [ ] Add option to pick from nearby networks when adding network
+
+### Cool features
+
+- [ ] Ability to share all networks in area via bluetooth (.jsonl file)
+- [ ] Use AI or OCR to scan wifi passwords
 
 ## Available Scripts
 

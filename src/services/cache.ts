@@ -3,6 +3,7 @@ import { openDB, getEventsForFilters, addEvents, clearDB } from "nostr-idb";
 import { Filter, NostrEvent } from "nostr-tools";
 import { from, Subject } from "rxjs";
 import { bufferTime, distinct, filter, mergeMap } from "rxjs/operators";
+import { eventStore } from "./stores";
 
 const db = await openDB();
 export function cacheRequest(filters: Filter[]) {
@@ -32,3 +33,8 @@ cacheEvent
     console.log(`Saving ${events.length} events to cache`);
     addEvents(db, events);
   });
+
+// Save all new events to the cache
+eventStore.inserts
+  .pipe(filter((e) => !isFromCache(e)))
+  .subscribe((e) => cacheEvent.next(e));

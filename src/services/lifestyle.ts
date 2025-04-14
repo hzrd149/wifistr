@@ -1,11 +1,18 @@
-import { combineLatest, filter, map, of, startWith, switchMap } from "rxjs";
+import {
+  combineLatest,
+  filter,
+  map,
+  of,
+  shareReplay,
+  startWith,
+  switchMap,
+} from "rxjs";
 import { kinds } from "nostr-tools";
 import { MailboxesQuery } from "applesauce-core/queries";
 
 import { accounts } from "./accounts";
 import { replaceableLoader } from "./loaders";
 import { queryStore } from "./stores";
-import { rxNostr } from "./nostr";
 import { defaultRelays } from "./settings";
 
 export const activeMailboxes = accounts.active$.pipe(
@@ -17,14 +24,20 @@ export const activeMailboxes = accounts.active$.pipe(
 );
 
 /** either the users outboxes or the default relays */
-export const appRelays = accounts.active$.pipe(
-  switchMap((account) =>
-    account
-      ? queryStore
-          .createQuery(MailboxesQuery, account.pubkey)
-          .pipe(map((mailboxes) => mailboxes?.outboxes))
-      : defaultRelays,
+export const appRelays = combineLatest([
+  accounts.active$.pipe(
+    switchMap((account) =>
+      account
+        ? queryStore
+            .createQuery(MailboxesQuery, account.pubkey)
+            .pipe(map((mailboxes) => mailboxes?.outboxes))
+        : of(undefined),
+    ),
   ),
+  defaultRelays,
+]).pipe(
+  map(([outboxes, relays]) => outboxes || relays),
+  shareReplay(1),
 );
 
 // load the users metadata, contacts, and relay list when the account changes and the mailboxes are loaded
@@ -52,23 +65,3 @@ combineLatest([accounts.active$, activeMailboxes]).subscribe(
     });
   },
 );
-
-// set the default relays when the account changes
-combineLatest([
-  accounts.active$.pipe(
-    switchMap((account) =>
-      account
-        ? queryStore.createQuery(MailboxesQuery, account.pubkey)
-        : of(undefined),
-    ),
-  ),
-  defaultRelays,
-]).subscribe(([mailboxes, defaultRelays]) => {
-  if (mailboxes) {
-    console.log("Setting default relays to", mailboxes.outboxes);
-    rxNostr.setDefaultRelays(mailboxes.outboxes);
-  } else {
-    console.log("Setting default relays to", defaultRelays);
-    rxNostr.setDefaultRelays(defaultRelays);
-  }
-});

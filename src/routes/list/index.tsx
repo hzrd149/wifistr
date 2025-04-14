@@ -1,25 +1,24 @@
-import { createEffect, createMemo, For, from } from "solid-js";
-import { TimelineQuery } from "applesauce-core/queries";
-import { createRxOneshotReq } from "rx-nostr";
 import { useNavigate } from "@solidjs/router";
+import { TimelineQuery } from "applesauce-core/queries";
+import { onlyEvents } from "applesauce-relay";
 import ngeohash from "ngeohash";
+import { switchMap } from "rxjs";
+import { createEffect, createMemo, For, from } from "solid-js";
 
-import { location$ } from "../../services/location";
-import { eventStore, queryStore } from "../../services/stores";
+import { BackIcon } from "../../components/icons";
 import { WIFI_NETWORK_KIND } from "../../const";
 import { calculateDistance, getLatLongFromEvent } from "../../helpers/geohash";
-import { BackIcon } from "../../components/icons";
-import NetworkCard from "./components/wifi-card";
 import { appRelays } from "../../services/lifestyle";
-import { rxNostr } from "../../services/nostr";
+import { location$ } from "../../services/location";
+import { pool } from "../../services/pool";
+import { eventStore, queryStore } from "../../services/stores";
+import NetworkCard from "./components/wifi-card";
 
 const LOAD_AT_PERCISION = 6;
 
 export default function WifiListView() {
   const navigate = useNavigate();
   const location = from(location$);
-
-  const relays = from(appRelays);
 
   const geohashes = createMemo(() => {
     const user = location();
@@ -37,7 +36,6 @@ export default function WifiListView() {
   // fetch the networks around the user
   let previousGeohashes: string[] | null = null;
   createEffect(() => {
-    const fromRelays = relays();
     const currentGeohashes = geohashes();
     if (!currentGeohashes) return;
 
@@ -49,18 +47,19 @@ export default function WifiListView() {
       return;
     previousGeohashes = currentGeohashes;
 
-    const req = createRxOneshotReq({
-      filters: {
-        kinds: [WIFI_NETWORK_KIND],
-        "#g": currentGeohashes,
-      },
-    });
-
     console.log(`Requesting wifi networks around the user`, currentGeohashes);
 
-    return rxNostr
-      .use(req, { on: { relays: fromRelays } })
-      .subscribe((packet) => eventStore.add(packet.event, packet.from));
+    return appRelays
+      .pipe(
+        switchMap((relays) =>
+          pool.req(relays, {
+            kinds: [WIFI_NETWORK_KIND],
+            "#g": currentGeohashes,
+          }),
+        ),
+        onlyEvents(),
+      )
+      .subscribe((event) => eventStore.add(event));
   });
 
   const networks = from(

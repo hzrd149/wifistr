@@ -7,6 +7,3 @@ export const eventStore = new EventStore();
 eventStore.verifyEvent = verifyEvent;
 
 export const queryStore = new QueryStore(eventStore);
-
-// @ts-expect-error
-window.eventStore = eventStore;

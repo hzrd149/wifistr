@@ -7,7 +7,7 @@ import { WifiCode } from "../../helpers/qr-code";
 import LocationPicker from "../../components/location-picker";
 import { factory } from "../../services/actions";
 import { WifiBlueprint } from "../../blueprints/wifi";
-import { publish } from "../../services/nostr";
+import { publish } from "../../services/pool";
 import { toastOperation } from "../../helpers/toast";
 import { WIFI_SECURITY_TYPES } from "../../const";
 

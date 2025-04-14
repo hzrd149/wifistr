@@ -1,7 +1,7 @@
-import { TimelineLoader } from "applesauce-loaders";
-import { rxNostr } from "./nostr";
+import { TimelineLoader } from "applesauce-loaders/loaders";
 import { WIFI_NETWORK_KIND } from "../const";
 import { eventStore } from "./stores";
+import { nostrRequest } from "./loaders";
 
 export const LOADERS_PRECISION = 5;
 
@@ -13,16 +13,14 @@ export function getTimelineLoader(geohash: string, relays: string[]) {
 
   if (!loaders.has(geohash)) {
     const loader = new TimelineLoader(
-      rxNostr,
+      nostrRequest,
       TimelineLoader.simpleFilterMap(relays, [
         { kinds: [WIFI_NETWORK_KIND], "#g": [geohash] },
       ]),
     );
 
     // start loader and send all events to the event store
-    loader.subscribe((packet) => {
-      eventStore.add(packet.event, packet.from);
-    });
+    loader.subscribe((event) => eventStore.add(event));
 
     loaders.set(geohash, loader);
     return loader;

@@ -15,7 +15,6 @@ import { accounts } from "../../services/accounts";
 import { appRelays } from "../../services/lifestyle";
 import CopyButton from "../../components/copy-button";
 import UserAvatar from "../../components/user-avatar";
-import UserName from "../../components/user-name";
 import UserFollowButton from "../../components/user-follow-button";
 import WifiComments from "./components/wifi-comments";
 import { createWifiQrCode } from "../../helpers/qr-code";
@@ -25,9 +24,10 @@ import {
   DeleteBlueprint,
   ReactionBlueprint,
 } from "applesauce-factory/blueprints";
-import { publish } from "../../services/nostr";
+import { publish } from "../../services/pool";
 import { ReactionsQuery } from "applesauce-core/queries";
 import WifiQrModal from "./components/wifi-qr-modal";
+import UserLink from "../../components/user-link";
 
 function WifiPage(props: { wifi: NostrEvent }) {
   const account = from(accounts.active$);
@@ -88,9 +88,7 @@ function WifiPage(props: { wifi: NostrEvent }) {
 
         <div class="flex gap-2 items-center">
           <UserAvatar pubkey={props.wifi.pubkey} />
-          <A href={`/profile/${props.wifi.pubkey}`}>
-            <UserName class="text-lg truncate" pubkey={props.wifi.pubkey} />
-          </A>
+          <UserLink class="text-lg" pubkey={props.wifi.pubkey} />
 
           <UserFollowButton
             pubkey={props.wifi.pubkey}

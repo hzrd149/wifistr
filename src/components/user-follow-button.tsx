@@ -9,7 +9,7 @@ import {
   NewContacts,
   UnfollowUser,
 } from "applesauce-actions/actions";
-import { publish } from "../services/nostr";
+import { publish } from "../services/pool";
 
 export default function UserFollowButton(props: {
   pubkey: string;

@@ -8,7 +8,7 @@ import { modifyPublicTags } from "applesauce-factory/operations/event";
 import { NextIcon, SettingsIcon } from "../components/icons";
 import { accounts } from "../services/accounts";
 import { actions, factory } from "../services/actions";
-import { publish } from "../services/nostr";
+import { publish } from "../services/pool";
 import { kinds } from "nostr-tools";
 import { addOutboxRelay } from "applesauce-factory/operations/tag";
 import { DEFAULT_LOOKUP_RELAYS, DEFAULT_RELAYS } from "../const";

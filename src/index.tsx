@@ -20,6 +20,7 @@ import WifiView from "./routes/wifi";
 import ProfileNetworks from "./routes/profile/networks";
 import WifiEditView from "./routes/wifi/edit";
 import WifiListView from "./routes/list";
+import NotificationsView from "./routes/notifications";
 
 const root = document.getElementById("root");
 
@@ -38,6 +39,7 @@ render(
         <Route path="/profile" component={ProfileView} />
         <Route path="/profile/:pubkey" component={ProfileView} />
         <Route path="/profile/:pubkey/networks" component={ProfileNetworks} />
+        <Route path="/notifications" component={NotificationsView} />
         <Route path="/list" component={WifiListView} />
         <Route path="/wifi/:naddr" component={WifiView} />
         <Route path="/wifi/:naddr/edit" component={WifiEditView} />

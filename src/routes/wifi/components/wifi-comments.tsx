@@ -4,13 +4,14 @@ import { CommentBlueprint } from "applesauce-factory/blueprints";
 
 import { asyncAction } from "../../../helpers/async-action";
 import { factory } from "../../../services/actions";
-import { publish } from "../../../services/nostr";
+import { publish } from "../../../services/pool";
 import { queryStore } from "../../../services/stores";
 import { CommentsQuery } from "applesauce-core/queries";
-import UserName from "../../../components/user-name";
 import { formatTimeAgo } from "../../../helpers/date";
 import { commentsLoader, reactionsLoader } from "../../../services/loaders";
 import { appRelays } from "../../../services/lifestyle";
+import UserAvatar from "../../../components/user-avatar";
+import UserLink from "../../../components/user-link";
 
 function AddCommentForm(props: { parent: NostrEvent }) {
   const [content, setContent] = createSignal("");
@@ -60,15 +61,14 @@ function Comment(props: { comment: NostrEvent; level?: number }) {
   return (
     <>
       <div class={`border-b pb-3 pl-${lvl}rem`}>
-        <div class="flex justify-between">
-          <span class="font-medium">
-            <UserName pubkey={props.comment.pubkey} />
-          </span>
-          <span class="text-sm text-gray-500">
+        <div class="flex gap-2 items-center mb-2">
+          <UserAvatar class="w-8 h-8" pubkey={props.comment.pubkey} />
+          <UserLink class="font-medium" pubkey={props.comment.pubkey} />
+          <span class="text-sm text-gray-500 ms-auto">
             {formatTimeAgo(props.comment.created_at)}
           </span>
         </div>
-        <p class="mt-1 text-gray-700">{props.comment.content}</p>
+        <p class="text-gray-700">{props.comment.content}</p>
       </div>
 
       <For each={replies()}>

@@ -5,7 +5,11 @@ import { ProfileQuery } from "applesauce-core/queries";
 import { of, switchMap } from "rxjs";
 
 import { accounts } from "../../services/accounts";
-import { BackIcon, SettingsIcon } from "../../components/icons";
+import {
+  BackIcon,
+  NotificationIcon,
+  SettingsIcon,
+} from "../../components/icons";
 import UserAvatar from "../../components/user-avatar";
 import { queryStore } from "../../services/stores";
 import { replaceableLoader } from "../../services/loaders";
@@ -86,9 +90,14 @@ function ProfileView(props: RouteSectionProps) {
           <BackIcon />
         </button>
 
-        <A href="/settings" class="p-2" aria-label="settings">
-          <SettingsIcon />
-        </A>
+        <div class="flex gap-2">
+          <A href="/notifications" class="p-2" aria-label="notifications">
+            <NotificationIcon />
+          </A>
+          <A href="/settings" class="p-2" aria-label="settings">
+            <SettingsIcon />
+          </A>
+        </div>
       </footer>
     </>
   );

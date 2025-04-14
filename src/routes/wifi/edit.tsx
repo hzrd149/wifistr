@@ -12,7 +12,7 @@ import { asyncAction } from "../../helpers/async-action";
 import { factory } from "../../services/actions";
 import { includeWifiTags } from "../../operations/event/wifi";
 import { WIFI_SECURITY_TYPES } from "../../const";
-import { publish } from "../../services/nostr";
+import { publish } from "../../services/pool";
 
 function WifiEditForm(props: { wifi: NostrEvent }) {
   const navigate = useNavigate();
