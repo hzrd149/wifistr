@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "serve": "vite preview",
     "build": "tsc -b && vite build && node scripts/build-index.js",
     "preview": "vite preview",
     "format": "prettier --write ."

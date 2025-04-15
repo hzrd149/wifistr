@@ -1,3 +1,5 @@
+import { MailboxesQuery } from "applesauce-core/queries";
+import { kinds } from "nostr-tools";
 import {
   combineLatest,
   filter,
@@ -7,13 +9,16 @@ import {
   startWith,
   switchMap,
 } from "rxjs";
-import { kinds } from "nostr-tools";
-import { MailboxesQuery } from "applesauce-core/queries";
 
 import { accounts } from "./accounts";
-import { replaceableLoader } from "./loaders";
-import { queryStore } from "./stores";
-import { defaultRelays } from "./settings";
+import {
+  commentsLoader,
+  reactionsLoader,
+  replaceableLoader,
+  singleEventLoader,
+} from "./loaders";
+import { defaultRelays, lookupRelays } from "./settings";
+import { eventStore, queryStore } from "./stores";
 
 export const activeMailboxes = accounts.active$.pipe(
   filter((account) => !!account),
@@ -65,3 +70,22 @@ combineLatest([accounts.active$, activeMailboxes]).subscribe(
     });
   },
 );
+
+// Start the loader and send any events to the event store
+replaceableLoader.subscribe((event) => eventStore.add(event));
+singleEventLoader.subscribe((event) => eventStore.add(event));
+reactionsLoader.subscribe((event) => eventStore.add(event));
+commentsLoader.subscribe((event) => eventStore.add(event));
+
+// Always fetch from the app relays
+appRelays.subscribe((relays) => {
+  replaceableLoader.extraRelays = relays;
+  singleEventLoader.extraRelays = relays;
+  reactionsLoader.extraRelays = relays;
+  commentsLoader.extraRelays = relays;
+});
+
+// Set the fallback lookup relays
+lookupRelays.subscribe((relays) => {
+  replaceableLoader.lookupRelays = relays;
+});
