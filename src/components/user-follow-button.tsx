@@ -1,15 +1,16 @@
-import { createMemo, from } from "solid-js";
-import { accounts } from "../services/accounts";
-import { toastOperation } from "../helpers/toast";
-import { UserContactsQuery } from "applesauce-core/queries";
-import { queryStore } from "../services/stores";
-import { actions } from "../services/actions";
 import {
   FollowUser,
   NewContacts,
   UnfollowUser,
 } from "applesauce-actions/actions";
+import { ContactsQuery } from "applesauce-core/queries";
+import { createMemo, from } from "solid-js";
+
+import { toastOperation } from "../helpers/toast";
+import { accounts } from "../services/accounts";
+import { actions } from "../services/actions";
 import { publish } from "../services/pool";
+import { queryStore } from "../services/stores";
 
 export default function UserFollowButton(props: {
   pubkey: string;
@@ -19,7 +20,7 @@ export default function UserFollowButton(props: {
   if (!account()) return;
 
   const contacts = from(
-    queryStore.createQuery(UserContactsQuery, account()!.pubkey),
+    queryStore.createQuery(ContactsQuery, account()!.pubkey),
   );
   const isFollowing = createMemo(() =>
     contacts()?.some((p) => p.pubkey === props.pubkey),
