@@ -1,5 +1,5 @@
-import { EventBlueprint, EventFactory } from "applesauce-factory";
-import { setContent } from "applesauce-factory/operations/event";
+import { blueprint, EventBlueprint } from "applesauce-factory";
+import { setContent } from "applesauce-factory/operations/content";
 import { WIFI_NETWORK_KIND } from "../const";
 import {
   GeohashLatLng,
@@ -19,12 +19,10 @@ export function WifiBlueprint(
   location: string | GeohashLatLng,
   description?: string,
 ): EventBlueprint {
-  return (ctx) =>
-    EventFactory.runProcess(
-      { kind: WIFI_NETWORK_KIND },
-      ctx,
-      includeWifiTags(wifi),
-      includeGeohashTags(location),
-      description ? setContent(description) : undefined,
-    );
+  return blueprint(
+    WIFI_NETWORK_KIND,
+    includeWifiTags(wifi),
+    includeGeohashTags(location),
+    description ? setContent(description) : undefined,
+  );
 }

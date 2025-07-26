@@ -35,6 +35,6 @@ cacheEvent
   });
 
 // Save all new events to the cache
-eventStore.inserts
+eventStore.insert$
   .pipe(filter((e) => !isFromCache(e)))
   .subscribe((e) => cacheEvent.next(e));

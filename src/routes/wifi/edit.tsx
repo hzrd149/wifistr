@@ -1,18 +1,16 @@
 import { Navigate, RouteSectionProps, useNavigate } from "@solidjs/router";
-import { createEffect, createSignal, from } from "solid-js";
+import { getTagValue } from "applesauce-core/helpers";
+import { setContent } from "applesauce-factory/operations/content";
 import { nip19, NostrEvent } from "nostr-tools";
-import { getTagValue, mergeRelaySets } from "applesauce-core/helpers";
-import { setContent } from "applesauce-factory/operations/event";
+import { createSignal, from } from "solid-js";
 
 import { BackIcon } from "../../components/icons";
-import { queryStore } from "../../services/stores";
-import { replaceableLoader } from "../../services/loaders";
-import { appRelays } from "../../services/lifestyle";
-import { asyncAction } from "../../helpers/async-action";
-import { factory } from "../../services/actions";
-import { includeWifiTags } from "../../operations/event/wifi";
 import { WIFI_SECURITY_TYPES } from "../../const";
+import { asyncAction } from "../../helpers/async-action";
+import { includeWifiTags } from "../../operations/event/wifi";
+import { factory } from "../../services/actions";
 import { publish } from "../../services/pool";
+import { eventStore } from "../../services/stores";
 
 function WifiEditForm(props: { wifi: NostrEvent }) {
   const navigate = useNavigate();
@@ -160,19 +158,9 @@ export default function WifiEditView(props: RouteSectionProps) {
   if (decoded.type !== "naddr") return <Navigate href="/" />;
 
   const pointer = decoded.data;
-  const relays = from(appRelays);
 
   const navigate = useNavigate();
-  const wifi = from(
-    queryStore.replaceable(pointer.kind, pointer.pubkey, pointer.identifier),
-  );
-
-  createEffect(() => {
-    replaceableLoader.next({
-      ...pointer,
-      relays: mergeRelaySets(pointer.relays, relays()),
-    });
-  });
+  const wifi = from(eventStore.replaceable(pointer));
 
   return (
     <>

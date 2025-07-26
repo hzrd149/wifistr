@@ -1,21 +1,22 @@
-import { interval, startWith } from "rxjs";
 import { A, RouteSectionProps, useNavigate } from "@solidjs/router";
-import { createEffect, createMemo, For, from, Match, Switch } from "solid-js";
 import {
   getAddressPointerForEvent,
   getTagValue,
 } from "applesauce-core/helpers";
-import { TimelineLoader } from "applesauce-loaders";
-import { naddrEncode } from "nostr-tools/nip19";
+import { createTimelineLoader } from "applesauce-loaders/loaders";
 import { NostrEvent } from "nostr-tools";
+import { naddrEncode } from "nostr-tools/nip19";
+import { interval, mergeMap, startWith } from "rxjs";
+import { createEffect, createMemo, For, from, Match, Switch } from "solid-js";
 
-import { eventStore, queryStore } from "../../services/stores";
 import { BackIcon } from "../../components/icons";
 import UserAvatar from "../../components/user-avatar";
 import UserName from "../../components/user-name";
 import { WIFI_NETWORK_KIND } from "../../const";
+import { cacheRequest } from "../../services/cache";
 import { appRelays } from "../../services/lifestyle";
-import { nostrRequest } from "../../services/loaders";
+import { pool } from "../../services/pool";
+import { eventStore } from "../../services/stores";
 
 export default function ProfileNetworks(props: RouteSectionProps) {
   const { pubkey } = props.params;
@@ -25,19 +26,15 @@ export default function ProfileNetworks(props: RouteSectionProps) {
   const loader = createMemo(() => {
     if (!pubkey || !relays()) return null;
 
-    return new TimelineLoader(
-      nostrRequest,
-      TimelineLoader.simpleFilterMap(relays()!, [
-        { kinds: [WIFI_NETWORK_KIND], authors: [pubkey] },
-      ]),
+    return createTimelineLoader(
+      pool,
+      relays()!,
+      {
+        kinds: [WIFI_NETWORK_KIND],
+        authors: [pubkey],
+      },
+      { eventStore, cache: cacheRequest },
     );
-  });
-
-  // listen to the loader and add events to the store
-  createEffect(() => {
-    if (!loader()) return;
-
-    return loader()!.subscribe((e) => eventStore.add(e));
   });
 
   // auto load timeline
@@ -45,14 +42,15 @@ export default function ProfileNetworks(props: RouteSectionProps) {
     if (!loader()) return;
 
     return interval(10_000)
-      .pipe(startWith(0))
-      .subscribe(() => {
-        loader()!.next(-Infinity);
-      });
+      .pipe(
+        startWith(0),
+        mergeMap(() => loader()!()),
+      )
+      .subscribe();
   });
 
   const networks = from(
-    queryStore.timeline({ kinds: [WIFI_NETWORK_KIND], authors: [pubkey] }),
+    eventStore.timeline({ kinds: [WIFI_NETWORK_KIND], authors: [pubkey] }),
   );
 
   return (

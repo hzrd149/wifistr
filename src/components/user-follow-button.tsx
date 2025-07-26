@@ -3,14 +3,13 @@ import {
   NewContacts,
   UnfollowUser,
 } from "applesauce-actions/actions";
-import { ContactsQuery } from "applesauce-core/queries";
 import { createMemo, from } from "solid-js";
 
 import { toastOperation } from "../helpers/toast";
 import { accounts } from "../services/accounts";
 import { actions } from "../services/actions";
 import { publish } from "../services/pool";
-import { queryStore } from "../services/stores";
+import { eventStore } from "../services/stores";
 
 export default function UserFollowButton(props: {
   pubkey: string;
@@ -19,9 +18,7 @@ export default function UserFollowButton(props: {
   const account = from(accounts.active$);
   if (!account()) return;
 
-  const contacts = from(
-    queryStore.createQuery(ContactsQuery, account()!.pubkey),
-  );
+  const contacts = from(eventStore.contacts(account()!.pubkey));
   const isFollowing = createMemo(() =>
     contacts()?.some((p) => p.pubkey === props.pubkey),
   );

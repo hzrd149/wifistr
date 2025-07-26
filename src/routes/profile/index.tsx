@@ -1,18 +1,15 @@
 import { A, Navigate, RouteSectionProps, useNavigate } from "@solidjs/router";
-import { createEffect, createMemo, from } from "solid-js";
-import { kinds } from "nostr-tools";
-import { ProfileQuery } from "applesauce-core/queries";
 import { of, switchMap } from "rxjs";
+import { createMemo, from } from "solid-js";
 
-import { accounts } from "../../services/accounts";
 import {
   BackIcon,
   NotificationIcon,
   SettingsIcon,
 } from "../../components/icons";
 import UserAvatar from "../../components/user-avatar";
-import { queryStore } from "../../services/stores";
-import { replaceableLoader } from "../../services/loaders";
+import { accounts } from "../../services/accounts";
+import { eventStore } from "../../services/stores";
 
 function ProfileView(props: RouteSectionProps) {
   const navigate = useNavigate();
@@ -31,21 +28,10 @@ function ProfileView(props: RouteSectionProps) {
   const profile = from(
     accounts.active$.pipe(
       switchMap((account) =>
-        account
-          ? queryStore.createQuery(ProfileQuery, account.pubkey)
-          : of(undefined),
+        account ? eventStore.profile(account.pubkey) : of(undefined),
       ),
     ),
   );
-
-  // Load the kind 0 event for the active account
-  createEffect(() => {
-    if (pubkey())
-      replaceableLoader.next({
-        pubkey: pubkey()!,
-        kind: kinds.Metadata,
-      });
-  });
 
   if (!account()) return <Navigate href="/welcome" />;
 

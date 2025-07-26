@@ -1,17 +1,16 @@
 import { Navigate, useNavigate } from "@solidjs/router";
-import { TimelineQuery } from "applesauce-core/queries";
+import { COMMENT_KIND } from "applesauce-core/helpers";
 import { onlyEvents } from "applesauce-relay";
 import { kinds } from "nostr-tools";
 import { switchMap } from "rxjs";
 import { createEffect, createMemo, For, from, Match, Switch } from "solid-js";
-import { COMMENT_KIND } from "applesauce-core/helpers";
 
 import { BackIcon, NotificationIcon } from "../../components/icons";
 import { WIFI_NETWORK_KIND } from "../../const";
 import { accounts } from "../../services/accounts";
 import { appRelays } from "../../services/lifestyle";
 import { pool } from "../../services/pool";
-import { eventStore, queryStore } from "../../services/stores";
+import { eventStore } from "../../services/stores";
 import CommentNotification from "./components/comment";
 
 export default function NotificationsView() {
@@ -52,9 +51,7 @@ export default function NotificationsView() {
       .subscribe((event) => eventStore.add(event));
   });
 
-  const notifications = from(
-    queryStore.createQuery(TimelineQuery, accountFilters()),
-  );
+  const notifications = from(eventStore.timeline(accountFilters()));
 
   // Sort notifications by timestamp
   const sortedNotifications = createMemo(() => {

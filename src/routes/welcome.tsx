@@ -1,17 +1,17 @@
 import { A, useNavigate } from "@solidjs/router";
-import { createSignal } from "solid-js";
-import { SimpleSigner } from "applesauce-signers";
-import { CreateProfile } from "applesauce-actions/actions";
 import { SimpleAccount } from "applesauce-accounts/accounts";
-import { modifyPublicTags } from "applesauce-factory/operations/event";
+import { CreateProfile } from "applesauce-actions/actions";
+import { modifyPublicTags } from "applesauce-factory/operations";
+import { addOutboxRelay } from "applesauce-factory/operations/tag";
+import { SimpleSigner } from "applesauce-signers";
+import { kinds } from "nostr-tools";
+import { createSignal } from "solid-js";
 
 import { NextIcon, SettingsIcon } from "../components/icons";
+import { DEFAULT_LOOKUP_RELAYS, DEFAULT_RELAYS } from "../const";
 import { accounts } from "../services/accounts";
 import { actions, factory } from "../services/actions";
 import { publish } from "../services/pool";
-import { kinds } from "nostr-tools";
-import { addOutboxRelay } from "applesauce-factory/operations/tag";
-import { DEFAULT_LOOKUP_RELAYS, DEFAULT_RELAYS } from "../const";
 
 export default function WelcomeView() {
   const navigate = useNavigate();

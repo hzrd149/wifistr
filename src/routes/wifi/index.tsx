@@ -1,33 +1,30 @@
 import { A, Navigate, RouteSectionProps, useNavigate } from "@solidjs/router";
-import { createEffect, createMemo, createSignal, from } from "solid-js";
 import { nip19, NostrEvent } from "nostr-tools";
+import { createEffect, createMemo, createSignal, from } from "solid-js";
 
+import { getTagValue } from "applesauce-core/helpers";
+import {
+  DeleteBlueprint,
+  ReactionBlueprint,
+} from "applesauce-factory/blueprints";
+import CopyButton from "../../components/copy-button";
 import {
   BackIcon,
   DislikeIcon,
   LikeIcon,
   QrCodeIcon,
 } from "../../components/icons";
-import { queryStore } from "../../services/stores";
-import { replaceableLoader } from "../../services/loaders";
-import { getTagValue, mergeRelaySets } from "applesauce-core/helpers";
-import { accounts } from "../../services/accounts";
-import { appRelays } from "../../services/lifestyle";
-import CopyButton from "../../components/copy-button";
 import UserAvatar from "../../components/user-avatar";
 import UserFollowButton from "../../components/user-follow-button";
-import WifiComments from "./components/wifi-comments";
-import { createWifiQrCode } from "../../helpers/qr-code";
-import { asyncAction } from "../../helpers/async-action";
-import { factory } from "../../services/actions";
-import {
-  DeleteBlueprint,
-  ReactionBlueprint,
-} from "applesauce-factory/blueprints";
-import { publish } from "../../services/pool";
-import { ReactionsQuery } from "applesauce-core/queries";
-import WifiQrModal from "./components/wifi-qr-modal";
 import UserLink from "../../components/user-link";
+import { asyncAction } from "../../helpers/async-action";
+import { createWifiQrCode } from "../../helpers/qr-code";
+import { accounts } from "../../services/accounts";
+import { factory } from "../../services/actions";
+import { publish } from "../../services/pool";
+import { eventStore } from "../../services/stores";
+import WifiComments from "./components/wifi-comments";
+import WifiQrModal from "./components/wifi-qr-modal";
 
 function WifiPage(props: { wifi: NostrEvent }) {
   const account = from(accounts.active$);
@@ -43,7 +40,7 @@ function WifiPage(props: { wifi: NostrEvent }) {
     hidden,
   });
 
-  const reactions = from(queryStore.createQuery(ReactionsQuery, props.wifi));
+  const reactions = from(eventStore.reactions(props.wifi));
   const likes = createMemo(() => reactions()?.filter((e) => e.content === "+"));
   const dislikes = createMemo(() =>
     reactions()?.filter((e) => e.content === "-"),
@@ -162,21 +159,10 @@ export default function WifiView(props: RouteSectionProps) {
   if (decoded.type !== "naddr") return <Navigate href="/" />;
 
   const pointer = decoded.data;
-  const relays = from(appRelays);
-
-  // load the wifi event
-  createEffect(() => {
-    replaceableLoader.next({
-      ...pointer,
-      relays: mergeRelaySets(pointer.relays, relays()),
-    });
-  });
 
   const account = from(accounts.active$);
   const navigate = useNavigate();
-  const wifi = from(
-    queryStore.replaceable(pointer.kind, pointer.pubkey, pointer.identifier),
-  );
+  const wifi = from(eventStore.addressable(pointer));
   const [showQrModal, setShowQrModal] = createSignal(false);
 
   // debug wifi event

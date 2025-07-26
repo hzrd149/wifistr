@@ -1,5 +1,4 @@
 import { useNavigate } from "@solidjs/router";
-import { TimelineQuery } from "applesauce-core/queries";
 import { onlyEvents } from "applesauce-relay";
 import ngeohash from "ngeohash";
 import { switchMap } from "rxjs";
@@ -11,7 +10,7 @@ import { calculateDistance, getLatLongFromEvent } from "../../helpers/geohash";
 import { appRelays } from "../../services/lifestyle";
 import { location$ } from "../../services/location";
 import { pool } from "../../services/pool";
-import { eventStore, queryStore } from "../../services/stores";
+import { eventStore } from "../../services/stores";
 import NetworkCard from "./components/wifi-card";
 
 const LOAD_AT_PERCISION = 6;
@@ -63,7 +62,7 @@ export default function WifiListView() {
   });
 
   const networks = from(
-    queryStore.createQuery(TimelineQuery, {
+    eventStore.timeline({
       kinds: [WIFI_NETWORK_KIND],
     }),
   );

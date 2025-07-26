@@ -5,13 +5,12 @@ import { CommentBlueprint } from "applesauce-factory/blueprints";
 import { asyncAction } from "../../../helpers/async-action";
 import { factory } from "../../../services/actions";
 import { publish } from "../../../services/pool";
-import { queryStore } from "../../../services/stores";
-import { CommentsQuery } from "applesauce-core/queries";
 import { formatTimeAgo } from "../../../helpers/date";
 import { commentsLoader, reactionsLoader } from "../../../services/loaders";
 import { appRelays } from "../../../services/lifestyle";
 import UserAvatar from "../../../components/user-avatar";
 import UserLink from "../../../components/user-link";
+import { eventStore } from "../../../services/stores";
 
 function AddCommentForm(props: { parent: NostrEvent }) {
   const [content, setContent] = createSignal("");
@@ -55,7 +54,7 @@ function AddCommentForm(props: { parent: NostrEvent }) {
 }
 
 function Comment(props: { comment: NostrEvent; level?: number }) {
-  const replies = from(queryStore.createQuery(CommentsQuery, props.comment));
+  const replies = from(eventStore.comments(props.comment));
   const lvl = props.level || 0;
 
   return (
@@ -79,19 +78,16 @@ function Comment(props: { comment: NostrEvent; level?: number }) {
 }
 
 export default function WifiComments(props: { wifi: NostrEvent }) {
-  const comments = from(queryStore.createQuery(CommentsQuery, props.wifi));
+  const comments = from(eventStore.comments(props.wifi));
 
   // load the comments and reactions
   const relays = from(appRelays);
   createEffect(() => {
-    commentsLoader.next({
+    commentsLoader({
       value: props.wifi.id,
       relays: relays(),
-    });
-    reactionsLoader.next({
-      value: props.wifi.id,
-      relays: relays(),
-    });
+    }).subscribe();
+    reactionsLoader(props.wifi, relays()).subscribe();
   });
 
   return (

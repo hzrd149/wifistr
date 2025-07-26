@@ -1,26 +1,25 @@
-import { createSignal, For, from, onMount, JSX, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { TimelineQuery } from "applesauce-core/queries";
 import { getTagValue } from "applesauce-core/helpers";
-import { map } from "rxjs";
-import { kinds } from "nostr-tools";
-import { modifyPublicTags } from "applesauce-factory/operations/event";
-import { onlyEvents } from "applesauce-relay";
+import { modifyPublicTags } from "applesauce-factory/operations";
 import {
   addOutboxRelay,
   removeOutboxRelay,
 } from "applesauce-factory/operations/tag";
+import { onlyEvents } from "applesauce-relay";
+import { kinds } from "nostr-tools";
+import { map } from "rxjs";
+import { createSignal, For, from, JSX, onMount, Show } from "solid-js";
 
-import { defaultRelays, lookupRelays } from "../services/settings";
 import { BackIcon, RemoveIcon } from "../components/icons";
-import { pool, publish } from "../services/pool";
-import { eventStore, queryStore } from "../services/stores";
-import { activeMailboxes } from "../services/lifestyle";
-import { toastOperation } from "../helpers/toast";
-import { factory } from "../services/actions";
-import { accounts } from "../services/accounts";
 import { asyncAction } from "../helpers/async-action";
+import { toastOperation } from "../helpers/toast";
+import { accounts } from "../services/accounts";
+import { factory } from "../services/actions";
 import { clearCache } from "../services/cache";
+import { activeMailboxes } from "../services/lifestyle";
+import { pool, publish } from "../services/pool";
+import { defaultRelays, lookupRelays } from "../services/settings";
+import { eventStore } from "../services/stores";
 
 function RelayRow(props: { url: string; onRemove?: () => void }) {
   return (
@@ -63,8 +62,8 @@ function AddRelayForm(props: {
 
   // Subscribe to an array of relays urls from the 30166 events
   const relays = from(
-    queryStore
-      .createQuery(TimelineQuery, { kinds: [30166] })
+    eventStore
+      .timeline({ kinds: [30166] })
       .pipe(
         map(
           (events) =>

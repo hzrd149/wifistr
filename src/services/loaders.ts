@@ -1,29 +1,36 @@
-import {
-  NostrRequest,
-  ReplaceableLoader,
-  SingleEventLoader,
-  TagValueLoader,
-} from "applesauce-loaders";
-import { kinds } from "nostr-tools";
 import { COMMENT_KIND } from "applesauce-core/helpers";
-
+import {
+  createAddressLoader,
+  createEventLoader,
+  createReactionsLoader,
+  createTagValueLoader,
+} from "applesauce-loaders/loaders";
 import { cacheRequest } from "./cache";
 import { pool } from "./pool";
+import { eventStore } from "./stores";
+import { defaultRelays, lookupRelays } from "./settings";
 
-export const nostrRequest: NostrRequest = (relays, filters) =>
-  pool.req(relays, filters);
-
-export const replaceableLoader = new ReplaceableLoader(nostrRequest, {
+export const addressLoader = createAddressLoader(pool, {
   cacheRequest,
+  extraRelays: defaultRelays,
+  eventStore,
+  lookupRelays,
 });
-export const singleEventLoader = new SingleEventLoader(nostrRequest, {
+export const eventLoader = createEventLoader(pool, {
   cacheRequest,
+  eventStore,
 });
-export const reactionsLoader = new TagValueLoader(nostrRequest, "e", {
+export const reactionsLoader = createReactionsLoader(pool, {
   cacheRequest,
-  kinds: [kinds.Reaction],
+  eventStore,
 });
-export const commentsLoader = new TagValueLoader(nostrRequest, "E", {
+export const commentsLoader = createTagValueLoader(pool, "E", {
   cacheRequest,
+  eventStore,
   kinds: [COMMENT_KIND],
 });
+
+// Attach loaders to the event store
+eventStore.eventLoader = eventLoader;
+eventStore.addressableLoader = addressLoader;
+eventStore.replaceableLoader = addressLoader;

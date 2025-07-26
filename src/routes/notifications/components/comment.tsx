@@ -3,27 +3,20 @@ import { getCommentRootPointer, getTagValue } from "applesauce-core/helpers";
 import { NostrEvent } from "nostr-tools";
 import { naddrEncode } from "nostr-tools/nip19";
 import { EMPTY } from "rxjs";
-import { createEffect, from } from "solid-js";
+import { from } from "solid-js";
 
 import UserAvatar from "../../../components/user-avatar";
 import UserLink from "../../../components/user-link";
 import { formatTimeAgo } from "../../../helpers/date";
-import { queryStore } from "../../../services/stores";
-import { replaceableLoader } from "../../../services/loaders";
+import { eventStore } from "../../../services/stores";
 
 export default function CommentNotification(props: { comment: NostrEvent }) {
   // Get the referenced network event id from the tags
   const root = getCommentRootPointer(props.comment);
   // const reply = createMemo(() => getCommentReplyPointer(props.comment));
 
-  createEffect(() => {
-    if (root?.type === "address") replaceableLoader.next(root);
-  });
-
   const network = from(
-    root?.type === "address"
-      ? queryStore.replaceable(root.kind, root.pubkey, root.identifier)
-      : EMPTY,
+    root?.type === "address" ? eventStore.addressable(root) : EMPTY,
   );
 
   return (

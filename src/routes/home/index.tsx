@@ -1,8 +1,8 @@
 import { A, Location, RouteSectionProps, useNavigate } from "@solidjs/router";
-import WifiMap from "./components/wifi-map";
 import { LatLngBounds, type LatLng } from "leaflet";
-import { createEffect, createMemo, createSignal, from } from "solid-js";
 import ngeohash from "ngeohash";
+import { createEffect, createMemo, createSignal, from } from "solid-js";
+import WifiMap from "./components/wifi-map";
 
 import {
   ListIcon,
@@ -11,16 +11,16 @@ import {
   SearchIcon,
   UserIcon,
 } from "../../components/icons";
-import { accounts } from "../../services/accounts";
 import UserAvatar from "../../components/user-avatar";
+import { WIFI_NETWORK_KIND } from "../../const";
+import { accounts } from "../../services/accounts";
+import { activeMailboxes } from "../../services/lifestyle";
 import {
   getTimelineLoader,
   LOADERS_PRECISION,
 } from "../../services/location-loaders";
-import { activeMailboxes } from "../../services/lifestyle";
-import { queryStore } from "../../services/stores";
-import { WIFI_NETWORK_KIND } from "../../const";
 import { defaultRelays, homeMapCenter } from "../../services/settings";
+import { eventStore } from "../../services/stores";
 
 const LOADER_MAX_ZOOM = 13;
 
@@ -72,11 +72,11 @@ function HomeView(props: RouteSectionProps) {
     console.log(`Loading events for`, geohashes());
 
     for (const geohash of geohashes()) {
-      getTimelineLoader(geohash, relays).next(Infinity);
+      getTimelineLoader(geohash, relays)().subscribe();
     }
   });
 
-  const networks = from(queryStore.timeline({ kinds: [WIFI_NETWORK_KIND] }));
+  const networks = from(eventStore.timeline({ kinds: [WIFI_NETWORK_KIND] }));
 
   return (
     <>
