@@ -7,7 +7,15 @@ import { VitePWA } from "vite-plugin-pwa";
 export default defineConfig({
   build: {
     sourcemap: true,
-    target: ["chrome89", "edge89", "firefox89", "safari15"],
+    target: ["es2022"],
+  },
+  esbuild: {
+    target: ["es2022"],
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "es2022",
+    },
   },
   plugins: [
     solid(),

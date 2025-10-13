@@ -1,4 +1,5 @@
 import "./lib/leaflet";
+import "window.nostrdb.js";
 import { render } from "solid-js/web";
 import "./index.css";
 import { Route, Router } from "@solidjs/router";

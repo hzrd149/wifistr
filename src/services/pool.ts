@@ -3,7 +3,6 @@ import { RelayPool } from "applesauce-relay";
 import { NostrEvent } from "nostr-tools";
 
 import { eventStore } from "./stores";
-import { cacheEvent } from "./cache";
 import { defaultRelays } from "./settings";
 import { appRelays } from "./lifestyle";
 
@@ -16,7 +15,6 @@ export async function publish(
   console.log("Publishing", event);
 
   eventStore.add(event);
-  cacheEvent.next(event);
 
   if (!relays) relays = await firstValueFrom(appRelays);
   if (!relays) relays = defaultRelays.getValue();
