@@ -195,7 +195,7 @@ function SearchView() {
         )}
       </main>
 
-      <footer class="flex flex-col gap-2 p-2">
+      <footer class="flex flex-col gap-2 p-2 pb-safe-or-2">
         <div class="flex gap-2 ">
           <button
             class={`px-3 py-1 rounded-lg font-medium transition-colors ${

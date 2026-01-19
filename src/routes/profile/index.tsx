@@ -67,7 +67,7 @@ function ProfileView(props: RouteSectionProps) {
         )}
       </main>
 
-      <footer class="bg-blue-500 text-white p-2 flex justify-between items-center">
+      <footer class="bg-blue-500 text-white p-2 pb-safe-or-2 flex justify-between items-center">
         <button
           onClick={() => navigate(-1)}
           class="p-2 cursor-pointer"

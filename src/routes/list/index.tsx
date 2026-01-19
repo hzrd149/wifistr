@@ -118,7 +118,7 @@ export default function WifiListView() {
           </For>
         )}
       </main>
-      <footer class="bg-blue-500 text-white p-2 flex items-center">
+      <footer class="bg-blue-500 text-white p-2 pb-safe-or-2 flex items-center">
         <button
           class="p-2 cursor-pointer"
           onClick={() => navigate(-1)}

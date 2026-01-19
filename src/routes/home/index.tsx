@@ -90,7 +90,7 @@ function HomeView(props: RouteSectionProps) {
             onCenterChange={setCenter}
           />
         </main>
-        <footer class="bg-blue-500 text-white p-2 flex items-center gap-2">
+        <footer class="bg-blue-500 text-white p-2 pb-safe-or-2 flex items-center gap-2">
           {account() ? (
             <A href="/profile">
               <UserAvatar pubkey={account()!.pubkey} class=" bg-white" />

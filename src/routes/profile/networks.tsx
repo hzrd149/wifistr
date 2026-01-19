@@ -93,7 +93,7 @@ export default function ProfileNetworks(props: RouteSectionProps) {
         </Switch>
       </main>
 
-      <footer class="bg-blue-500 text-white p-2 flex items-center">
+      <footer class="bg-blue-500 text-white p-2 pb-safe-or-2 flex items-center">
         <button onClick={() => navigate(-1)} class="p-2 cursor-pointer">
           <BackIcon />
         </button>

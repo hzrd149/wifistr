@@ -52,7 +52,7 @@ function SigninView() {
         )}
       </form>
 
-      <footer class="flex justify-between p-2 flex-shrink-0">
+      <footer class="flex justify-between p-2 pb-safe-or-2 flex-shrink-0">
         <button
           onClick={() => navigate(-1)}
           class="p-2 cursor-pointer"

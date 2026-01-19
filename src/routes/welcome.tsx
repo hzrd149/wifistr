@@ -81,7 +81,7 @@ export default function WelcomeView() {
         </A>
       </main>
 
-      <footer class="flex justify-between p-2 flex-shrink-0">
+      <footer class="flex justify-between p-2 pb-safe-or-2 flex-shrink-0">
         <A href="/settings" class="p-2" aria-label="settings">
           <SettingsIcon />
         </A>

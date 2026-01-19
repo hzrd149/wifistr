@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">wifistr</string>
+    <string name="title_activity_main">wifistr</string>
+    <string name="package_name">nostr.wifistr</string>
+    <string name="custom_url_scheme">nostr.wifistr</string>
+</resources>

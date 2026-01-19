@@ -168,7 +168,7 @@ export default function WifiEditView(props: RouteSectionProps) {
         {wifi() ? <WifiEditForm wifi={wifi()!} /> : <div>Loading...</div>}
       </main>
 
-      <footer class="bg-blue-500 text-white p-2 flex items-center gap-2">
+      <footer class="bg-blue-500 text-white p-2 pb-safe-or-2 flex items-center gap-2">
         <button class="p-2 cursor-pointer" onClick={() => navigate(-1)}>
           <BackIcon />
         </button>
