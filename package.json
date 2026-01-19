@@ -17,7 +17,9 @@
   },
   "dependencies": {
     "@capacitor/android": "^8.0.1",
+    "@capacitor/clipboard": "^8.0.0",
     "@capacitor/core": "^8.0.1",
+    "@capacitor/geolocation": "^8.0.0",
     "@capacitor/ios": "^8.0.1",
     "@solid-primitives/scheduled": "^1.5.2",
     "@solidjs/router": "^0.15.3",

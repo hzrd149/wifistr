@@ -5,8 +5,10 @@ import "./index.css";
 import { Route, Router } from "@solidjs/router";
 import { Toaster } from "solid-toast";
 import "solid-devtools";
+import { ParentProps } from "solid-js";
 
 import "./services/lifestyle";
+import { useCapacitorBackButton } from "./helpers/capacitor-back-button";
 
 import HomeView from "./routes/home";
 import SearchView from "./routes/search";
@@ -23,13 +25,18 @@ import WifiEditView from "./routes/wifi/edit";
 import WifiListView from "./routes/list";
 import NotificationsView from "./routes/notifications";
 
+function RootLayout(props: ParentProps) {
+  useCapacitorBackButton();
+  return <>{props.children}</>;
+}
+
 const root = document.getElementById("root");
 
 render(
   () => (
     <>
       <Toaster />
-      <Router base={import.meta.env.BASE_URL}>
+      <Router base={import.meta.env.BASE_URL} root={RootLayout}>
         <Route path="/" component={HomeView} />
         <Route path="/search" component={SearchView} />
         <Route path="/create" component={CreateWifiView} />

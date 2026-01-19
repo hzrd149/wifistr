@@ -1,10 +1,14 @@
+import { Clipboard } from "@capacitor/clipboard";
 import { createSignal } from "solid-js";
+
 import { CheckIcon, CopyToClipboardIcon } from "./icons";
 
 export default function CopyButton(props: { text: string }) {
   const [copied, setCopied] = createSignal(false);
-  const copy = () => {
-    navigator.clipboard.writeText(props.text);
+  const copy = async () => {
+    await Clipboard.write({
+      string: props.text,
+    });
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
   };
