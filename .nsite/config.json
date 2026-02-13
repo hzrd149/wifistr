@@ -8,5 +8,22 @@
   ],
   "id": "wifistr",
   "title": "wifistr",
-  "description": "Open wifi map on nostr"
+  "description": "Open wifi map on nostr",
+  "publishAppHandler": true,
+  "appHandler": {
+    "name": "wifistr",
+    "description": "open wifi map powered by nostr",
+    "kinds": [38787],
+    "icon": "https://hzrd149.github.io/wifistr/apple-touch-icon.png",
+    "platforms": {
+      "web": {
+        "patterns": [
+          {
+            "url": "https://hzrd149.github.io/wifistr/wifi/<bech32>",
+            "entities": ["naddr"]
+          }
+        ]
+      }
+    }
+  }
 }
